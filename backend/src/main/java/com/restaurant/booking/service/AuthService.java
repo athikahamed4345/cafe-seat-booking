@@ -51,14 +51,19 @@ public class AuthService {
         user.setDietaryNotes(dietaryNotes);
         user.setAccessibilityNeeded(accessibilityNeeded);
         user.setGdprConsent(gdprConsent);
-        user.setEmailVerified(false);
 
-        // Generate email verification token
-        String token = UUID.randomUUID().toString();
-        user.setVerifyToken(token);
-        userRepo.save(user);
-
-        emailService.sendEmailVerification(email, token);
+        if (emailService.isEnabled()) {
+            // Email on: require verification before login
+            user.setEmailVerified(false);
+            String token = UUID.randomUUID().toString();
+            user.setVerifyToken(token);
+            userRepo.save(user);
+            emailService.sendEmailVerification(email, token);
+        } else {
+            // Email off: auto-verify so users can log in immediately
+            user.setEmailVerified(true);
+            userRepo.save(user);
+        }
     }
 
     // ── Verify email ──────────────────────────────────────────────────────────

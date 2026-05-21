@@ -19,6 +19,8 @@ public class EmailService {
         this.mailSender = mailSender;
     }
 
+    public boolean isEnabled() { return enabled; }
+
     // ── Booking confirmation ──────────────────────────────────────────────────
 
     public void sendBookingConfirmation(Booking booking) {
