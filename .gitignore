@@ -25,6 +25,9 @@ Thumbs.db
 *.log
 logs/
 
+# PDF documents
+*.pdf
+
 # Environment / secrets
 .env
 application-local.properties
