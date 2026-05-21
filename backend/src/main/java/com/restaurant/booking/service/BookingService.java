@@ -51,7 +51,13 @@ public class BookingService {
         if (!table.getIsAvailable())
             throw new RuntimeException("This table is currently unavailable.");
 
-        // ── Duplicate booking check ───────────────────────────────────────────
+        // ── Capacity check ────────────────────────────────────────────────────
+        if (req.getPartySize() < table.getMinCapacity())
+            throw new RuntimeException("This table requires at least " + table.getMinCapacity() + " guests.");
+        if (req.getPartySize() > table.getMaxCapacity())
+            throw new RuntimeException("This table fits a maximum of " + table.getMaxCapacity() + " guests.");
+
+        // ── Duplicate booking check (same user) ───────────────────────────────
         boolean duplicate = bookingRepo.existsByUserAndBookingDateAndBookingTimeAndStatusNotIn(
             user,
             req.getBookingDate(),
@@ -60,6 +66,16 @@ public class BookingService {
         );
         if (duplicate)
             throw new RuntimeException("You already have a booking at this date and time.");
+
+        // ── Table double-booking check (same table, any user) ─────────────────
+        boolean tableBooked = bookingRepo.existsByTableAndBookingDateAndBookingTimeAndStatusNotIn(
+            table,
+            req.getBookingDate(),
+            req.getBookingTime(),
+            List.of(Booking.BookingStatus.CANCELLED, Booking.BookingStatus.NO_SHOW)
+        );
+        if (tableBooked)
+            throw new RuntimeException("This table is already booked for the selected date and time. Please choose another.");
 
         Booking b = new Booking();
         b.setUser(user);
@@ -92,7 +108,7 @@ public class BookingService {
     }
 
     public List<Booking> getAllBookings() {
-        return bookingRepo.findAll();
+        return bookingRepo.findAllByOrderByCreatedAtDesc();
     }
 
     public Booking updateStatus(Long id, Booking.BookingStatus status) {
