@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CafeBook — Cafe Seat Booking System</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: #fdf8f2; color: #222; }
+
+    /* NAV */
+    nav { background: #3d2b1f; padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; }
+    nav .logo { color: #f5ede0; font-size: 1.3rem; font-weight: 700; text-decoration: none; }
+    nav a.btn { background: #c8a96e; color: #3d2b1f; padding: 0.45rem 1.1rem; border-radius: 6px;
+                font-size: 0.88rem; font-weight: 700; text-decoration: none; }
+    nav a.btn:hover { background: #b8945a; }
+
+    /* HERO */
+    .hero { background: linear-gradient(135deg, #3d2b1f 0%, #6b4c2a 100%);
+            color: #f5ede0; text-align: center; padding: 80px 20px 70px; }
+    .hero .badge { display: inline-block; background: rgba(200,169,110,0.25); color: #c8a96e;
+                   border: 1px solid #c8a96e; border-radius: 20px; font-size: 0.8rem;
+                   padding: 4px 14px; margin-bottom: 20px; letter-spacing: 1px; }
+    .hero h1 { font-size: 2.8rem; margin-bottom: 16px; line-height: 1.2; }
+    .hero h1 span { color: #c8a96e; }
+    .hero p { font-size: 1.1rem; color: #d4c4b0; max-width: 560px; margin: 0 auto 32px; line-height: 1.7; }
+    .hero-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+    .hero-btns a { padding: 0.75rem 1.8rem; border-radius: 8px; font-weight: 700;
+                   font-size: 0.95rem; text-decoration: none; }
+    .btn-primary   { background: #c8a96e; color: #3d2b1f; }
+    .btn-secondary { background: transparent; color: #f5ede0; border: 2px solid #c8a96e; }
+    .btn-primary:hover   { background: #b8945a; }
+    .btn-secondary:hover { background: rgba(200,169,110,0.1); }
+
+    /* SECTIONS */
+    section { padding: 60px 20px; max-width: 1000px; margin: 0 auto; }
+    section h2 { font-size: 1.7rem; color: #3d2b1f; text-align: center; margin-bottom: 10px; }
+    .section-sub { text-align: center; color: #888; font-size: 0.95rem; margin-bottom: 40px; }
+
+    /* FEATURES GRID */
+    .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
+    .feature-card { background: #fff; border: 1px solid #e8dece; border-radius: 10px;
+                    padding: 22px 20px; text-align: center; }
+    .feature-card .icon { font-size: 2rem; margin-bottom: 12px; }
+    .feature-card h3 { font-size: 0.95rem; color: #3d2b1f; margin-bottom: 8px; font-weight: 700; }
+    .feature-card p  { font-size: 0.84rem; color: #666; line-height: 1.55; }
+
+    /* HOW IT WORKS */
+    .how-wrap { background: #fff; border-radius: 12px; padding: 40px; border: 1px solid #e8dece; }
+    .steps-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px; }
+    .step { text-align: center; }
+    .step .num { width: 40px; height: 40px; border-radius: 50%; background: #6b4c2a; color: #fff;
+                 font-size: 1rem; font-weight: 700; display: flex; align-items: center;
+                 justify-content: center; margin: 0 auto 10px; }
+    .step h4 { font-size: 0.88rem; color: #3d2b1f; margin-bottom: 5px; font-weight: 700; }
+    .step p  { font-size: 0.81rem; color: #777; line-height: 1.5; }
+
+    /* ZONES */
+    .zones-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; }
+    .zone-card  { background: #fff; border: 1px solid #e8dece; border-radius: 8px;
+                  padding: 16px; text-align: center; }
+    .zone-card .zi { font-size: 1.6rem; margin-bottom: 6px; }
+    .zone-card h4  { font-size: 0.85rem; color: #3d2b1f; font-weight: 700; margin-bottom: 4px; }
+    .zone-card p   { font-size: 0.78rem; color: #888; }
+
+    /* TECH STACK */
+    .stack-row { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+    .tag { display: inline-block; padding: 6px 16px; border-radius: 20px; font-size: 0.82rem;
+           font-weight: 600; }
+    .tag.back  { background: #e8f5e9; color: #2e7d32; }
+    .tag.front { background: #e3f2fd; color: #1565c0; }
+    .tag.infra { background: #fff3e0; color: #e65100; }
+
+    /* FOOTER */
+    footer { background: #3d2b1f; color: #c4a882; text-align: center;
+             padding: 30px 20px; font-size: 0.85rem; }
+    footer a { color: #c8a96e; text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    .divider { border: none; border-top: 1px solid #e8dece; margin: 0; }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="logo">&#9749; CafeBook</a>
+  <a href="https://github.com/athikahamed4345/cafe-seat-booking" class="btn" target="_blank">View on GitHub</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="badge">OPEN SOURCE PROJECT</div>
+  <h1>Cafe Seat Booking<br><span>Made Simple</span></h1>
+  <p>A full-stack reservation system built for cafes. Customers choose their zone, book instantly, and receive email confirmation — all without a phone call.</p>
+  <div class="hero-btns">
+    <a href="https://github.com/athikahamed4345/cafe-seat-booking" class="btn-primary" target="_blank">⭐ Star on GitHub</a>
+    <a href="https://github.com/athikahamed4345/cafe-seat-booking#readme" class="btn-secondary" target="_blank">Read the Docs</a>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section>
+  <h2>Everything a Cafe Needs</h2>
+  <p class="section-sub">Built for both customers and cafe owners — no third-party platform required.</p>
+  <div class="features">
+    <div class="feature-card">
+      <div class="icon">📅</div>
+      <h3>Instant Reservations</h3>
+      <p>Customers pick a date, time, party size, and confirm — no phone calls, no waiting.</p>
+    </div>
+    <div class="feature-card">
+      <div class="icon">🗂</div>
+      <h3>Zone-Based Seating</h3>
+      <p>Choose from Window Side, Patio, Lounge, Private Nook, and more — unique to CafeBook.</p>
+    </div>
+    <div class="feature-card">
+      <div class="icon">📧</div>
+      <h3>Automatic Emails</h3>
+      <p>Confirmation, status updates, and password reset emails sent automatically.</p>
+    </div>
+    <div class="feature-card">
+      <div class="icon">🛠</div>
+      <h3>Admin Dashboard</h3>
+      <p>View all bookings, update statuses, manage tables, enable or disable seats live.</p>
+    </div>
+    <div class="feature-card">
+      <div class="icon">🔒</div>
+      <h3>Secure Accounts</h3>
+      <p>JWT authentication, email verification, password reset, and GDPR-compliant data deletion.</p>
+    </div>
+    <div class="feature-card">
+      <div class="icon">📱</div>
+      <h3>Works on Any Device</h3>
+      <p>Responsive design — looks great on phones, tablets, and desktops without any extra setup.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- HOW IT WORKS -->
+<section>
+  <h2>How It Works</h2>
+  <p class="section-sub">From sign-up to a confirmed seat in under a minute.</p>
+  <div class="how-wrap">
+    <div class="steps-row">
+      <div class="step">
+        <div class="num">1</div>
+        <h4>Create Account</h4>
+        <p>Sign up and verify your email address with one click.</p>
+      </div>
+      <div class="step">
+        <div class="num">2</div>
+        <h4>Pick Date & Time</h4>
+        <p>Choose when you want to visit and how many guests.</p>
+      </div>
+      <div class="step">
+        <div class="num">3</div>
+        <h4>Choose Your Zone</h4>
+        <p>Browse available tables by seating zone and capacity.</p>
+      </div>
+      <div class="step">
+        <div class="num">4</div>
+        <h4>Confirm Booking</h4>
+        <p>Add special notes and confirm your reservation.</p>
+      </div>
+      <div class="step">
+        <div class="num">5</div>
+        <h4>Get Email</h4>
+        <p>Receive instant confirmation with your booking reference.</p>
+      </div>
+      <div class="step">
+        <div class="num">6</div>
+        <h4>Enjoy Your Visit</h4>
+        <p>Your seat is ready and waiting when you arrive.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- SEATING ZONES -->
+<section>
+  <h2>6 Seating Zones</h2>
+  <p class="section-sub">Every customer gets the experience they came for.</p>
+  <div class="zones-grid">
+    <div class="zone-card"><div class="zi">🪟</div><h4>Window Side</h4><p>Scenic views, 1–4 guests</p></div>
+    <div class="zone-card"><div class="zi">🛋</div><h4>Cosy Corner</h4><p>Quiet & intimate, 1–2 guests</p></div>
+    <div class="zone-card"><div class="zi">🌿</div><h4>Outdoor Patio</h4><p>Fresh air, 2–6 guests</p></div>
+    <div class="zone-card"><div class="zi">🔒</div><h4>Private Nook</h4><p>Meetings, 2–6 guests</p></div>
+    <div class="zone-card"><div class="zi">☕</div><h4>Main Floor</h4><p>Everyday visits, 1–4 guests</p></div>
+    <div class="zone-card"><div class="zi">🎵</div><h4>Lounge</h4><p>Groups & longer stays, 2–8 guests</p></div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- TECH STACK -->
+<section>
+  <h2>Technology Stack</h2>
+  <p class="section-sub">Modern, production-ready, and cloud deployable.</p>
+  <div class="stack-row">
+    <span class="tag back">Java 21</span>
+    <span class="tag back">Spring Boot 3.2</span>
+    <span class="tag back">Spring Security</span>
+    <span class="tag back">JWT Auth</span>
+    <span class="tag back">Spring Data JPA</span>
+    <span class="tag back">JavaMailSender</span>
+    <span class="tag front">HTML5</span>
+    <span class="tag front">CSS3</span>
+    <span class="tag front">Vanilla JavaScript</span>
+    <span class="tag front">Fetch API</span>
+    <span class="tag infra">H2 Database</span>
+    <span class="tag infra">PostgreSQL Ready</span>
+    <span class="tag infra">Maven</span>
+    <span class="tag infra">JUnit 5 + Mockito</span>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>&#9749; <strong>CafeBook</strong> — Open source cafe seat booking system</p>
+  <p style="margin-top:8px">
+    <a href="https://github.com/athikahamed4345/cafe-seat-booking" target="_blank">GitHub Repository</a>
+    &nbsp;·&nbsp;
+    <a href="https://github.com/athikahamed4345/cafe-seat-booking#readme" target="_blank">Documentation</a>
+  </p>
+</footer>
+
+</body>
+</html>
