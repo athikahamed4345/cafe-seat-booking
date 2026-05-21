@@ -5,240 +5,586 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Dashboard — CafeBook</title>
   <link rel="stylesheet" href="/css/style.css">
+  <style>
+    /* ── Admin Layout ──────────────────────────────────────────────────────── */
+    body { background: #f0ebe4; }
+
+    .admin-wrap {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* ── Sidebar ────────────────────────────────────────────────────────────── */
+    .sidebar {
+      width: 240px;
+      background: #1a0f00;
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      z-index: 300;
+      box-shadow: 4px 0 20px rgba(0,0,0,0.3);
+      flex-shrink: 0;
+    }
+    .sidebar-brand {
+      padding: 1.6rem 1.5rem 1.2rem;
+      border-bottom: 1px solid rgba(201,169,110,0.15);
+    }
+    .sidebar-brand .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      color: #c9a96e;
+      text-decoration: none;
+      display: block;
+    }
+    .sidebar-brand .admin-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(201,169,110,0.5);
+      margin-top: 4px;
+    }
+    .sidebar-nav {
+      padding: 1.2rem 0;
+      flex: 1;
+    }
+    .sidebar-section {
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.25);
+      padding: 0.8rem 1.5rem 0.4rem;
+      font-weight: 600;
+    }
+    .sidebar-link {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.7rem 1.5rem;
+      color: rgba(255,255,255,0.6);
+      text-decoration: none;
+      font-size: 0.82rem;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+      transition: all 0.2s;
+      border-left: 3px solid transparent;
+    }
+    .sidebar-link:hover { color: #c9a96e; background: rgba(201,169,110,0.06); }
+    .sidebar-link.active { color: #c9a96e; background: rgba(201,169,110,0.1); border-left-color: #c9a96e; }
+    .sidebar-link .s-icon { font-size: 1rem; width: 20px; text-align: center; }
+    .sidebar-bottom {
+      padding: 1rem 0;
+      border-top: 1px solid rgba(201,169,110,0.1);
+    }
+
+    /* ── Main content ───────────────────────────────────────────────────────── */
+    .admin-main {
+      margin-left: 240px;
+      flex: 1;
+      min-width: 0;
+    }
+    .admin-header {
+      background: #fff;
+      padding: 1.2rem 2rem;
+      border-bottom: 1px solid #e8dece;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .admin-header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.35rem;
+      color: #1a0f00;
+      font-weight: 600;
+    }
+    .admin-header .header-meta {
+      font-size: 0.78rem;
+      color: #999;
+      margin-top: 1px;
+    }
+    .header-right { display: flex; align-items: center; gap: 1rem; }
+    .header-date {
+      font-size: 0.78rem;
+      color: #888;
+      background: #f5f0ea;
+      padding: 0.35rem 0.8rem;
+      border-radius: 20px;
+    }
+
+    /* ── Stats ──────────────────────────────────────────────────────────────── */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.2rem;
+      padding: 1.8rem 2rem 0;
+    }
+    .stat-box {
+      background: #fff;
+      border-radius: 12px;
+      padding: 1.3rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      border: 1px solid #ede5d8;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .stat-icon {
+      width: 48px; height: 48px;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem;
+      flex-shrink: 0;
+    }
+    .stat-icon.green  { background: #e8f5e9; }
+    .stat-icon.blue   { background: #e3f2fd; }
+    .stat-icon.yellow { background: #fff8e1; }
+    .stat-icon.red    { background: #fce4ec; }
+    .stat-num { font-size: 1.8rem; font-weight: 700; color: #1a0f00; line-height: 1; }
+    .stat-lbl { font-size: 0.76rem; color: #999; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
+
+    /* ── Content area ───────────────────────────────────────────────────────── */
+    .admin-content { padding: 1.8rem 2rem; }
+
+    /* ── Tab bar ────────────────────────────────────────────────────────────── */
+    .tab-bar {
+      display: flex;
+      gap: 0;
+      border-bottom: 2px solid #e8dece;
+      margin-bottom: 1.5rem;
+    }
+    .tab-btn {
+      padding: 0.7rem 1.5rem;
+      font-size: 0.83rem;
+      font-weight: 600;
+      color: #888;
+      background: none;
+      border: none;
+      cursor: pointer;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      transition: all 0.2s;
+    }
+    .tab-btn:hover { color: #6b4c2a; }
+    .tab-btn.active { color: #6b4c2a; border-bottom-color: #c9a96e; }
+
+    /* ── Filter row ─────────────────────────────────────────────────────────── */
+    .filter-bar {
+      display: flex;
+      gap: 0.8rem;
+      margin-bottom: 1.2rem;
+      flex-wrap: wrap;
+      align-items: flex-end;
+    }
+    .filter-bar .form-group { margin-bottom: 0; flex: 1; min-width: 140px; }
+    .filter-bar input, .filter-bar select {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 0.55rem 0.9rem;
+      font-size: 0.84rem;
+      width: 100%;
+    }
+    .filter-bar label { font-size: 0.72rem; color: #888; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 5px; display: block; }
+
+    /* ── Booking cards ──────────────────────────────────────────────────────── */
+    .booking-grid { display: flex; flex-direction: column; gap: 0.7rem; }
+    .b-card {
+      background: #fff;
+      border-radius: 10px;
+      border: 1px solid #ede5d8;
+      padding: 1rem 1.3rem;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 0.5rem 1rem;
+      align-items: center;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+      transition: box-shadow 0.2s;
+    }
+    .b-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+    .b-card-left { min-width: 0; }
+    .b-card-top { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 4px; }
+    .b-name { font-family: 'Playfair Display', serif; font-weight: 600; font-size: 1rem; color: #1a0f00; }
+    .b-email { font-size: 0.76rem; color: #aaa; }
+    .b-ref { font-size: 0.68rem; color: #ccc; background: #f5f0ea; padding: 2px 7px; border-radius: 10px; }
+    .b-meta { font-size: 0.8rem; color: #888; display: flex; gap: 1rem; flex-wrap: wrap; }
+    .b-meta span { display: flex; align-items: center; gap: 4px; }
+    .b-card-right { display: flex; align-items: center; gap: 0.6rem; flex-shrink: 0; }
+    .status-select {
+      font-size: 0.75rem;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 0.35rem 0.6rem;
+      background: #fafafa;
+      color: #333;
+      cursor: pointer;
+    }
+
+    /* ── Tables list ────────────────────────────────────────────────────────── */
+    .add-table-card {
+      background: #fff;
+      border-radius: 12px;
+      border: 1px solid #ede5d8;
+      padding: 1.4rem 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .add-table-card h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.05rem;
+      color: #1a0f00;
+      margin-bottom: 1.1rem;
+    }
+    .add-table-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 0.8rem;
+      align-items: end;
+    }
+    .add-table-grid .form-group { margin: 0; }
+    .add-table-grid label { font-size: 0.72rem; color: #888; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; display: block; margin-bottom: 5px; }
+    .add-table-grid input, .add-table-grid select {
+      width: 100%; border: 1px solid #ddd; border-radius: 8px;
+      padding: 0.55rem 0.8rem; font-size: 0.84rem;
+    }
+
+    .tables-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 0.9rem; }
+    .t-card {
+      background: #fff;
+      border-radius: 10px;
+      border: 1px solid #ede5d8;
+      padding: 1.1rem 1.3rem;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    }
+    .t-card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; }
+    .t-number { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; color: #1a0f00; }
+    .t-avail { font-size: 0.72rem; font-weight: 600; padding: 3px 10px; border-radius: 20px; }
+    .t-avail.yes { background: #e8f5e9; color: #2e7d32; }
+    .t-avail.no  { background: #fce4ec; color: #b71c1c; }
+    .t-info { font-size: 0.8rem; color: #888; margin-bottom: 10px; }
+    .t-actions { display: flex; gap: 0.5rem; }
+    .btn-sm { font-size: 0.72rem; padding: 0.3rem 0.85rem; border-radius: 6px; border: 1px solid; cursor: pointer; font-weight: 600; transition: all 0.2s; }
+    .btn-sm.toggle-on  { background: #fff8e1; color: #8a6000; border-color: #f5cc5a; }
+    .btn-sm.toggle-on:hover  { background: #f5cc5a; }
+    .btn-sm.toggle-off { background: #e8f5e9; color: #2e7d32; border-color: #81c784; }
+    .btn-sm.toggle-off:hover { background: #81c784; color: #fff; }
+    .btn-sm.del  { background: #fff; color: #b71c1c; border-color: #ef9a9a; }
+    .btn-sm.del:hover  { background: #b71c1c; color: #fff; border-color: #b71c1c; }
+
+    /* ── Badges ─────────────────────────────────────────────────────────────── */
+    .badge { display:inline-block; font-size:0.68rem; font-weight:700; padding:2px 9px; border-radius:20px; letter-spacing:0.03em; text-transform:uppercase; }
+    .badge-green  { background:#e8f5e9; color:#2e7d32; }
+    .badge-yellow { background:#fff8e1; color:#8a6000; }
+    .badge-red    { background:#fce4ec; color:#b71c1c; }
+    .badge-blue   { background:#e3f2fd; color:#1565c0; }
+    .badge-gray   { background:#f5f5f5; color:#666; }
+
+    /* ── Empty / alert ──────────────────────────────────────────────────────── */
+    .empty-box { text-align:center; padding:3rem; color:#bbb; font-size:0.9rem; background:#fff; border-radius:10px; border:1px dashed #e0d8ce; }
+    .empty-box .e-icon { font-size:2rem; margin-bottom:0.5rem; }
+
+    /* ── Responsive ─────────────────────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .sidebar { width: 200px; }
+      .admin-main { margin-left: 200px; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 640px) {
+      .sidebar { display: none; }
+      .admin-main { margin-left: 0; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); padding: 1rem; }
+      .admin-content { padding: 1rem; }
+      .admin-header { padding: 1rem; }
+    }
+  </style>
 </head>
 <body>
-  <nav class="navbar">
-    <a href="/index.html" class="logo">&#9749; CafeBook</a>
-    <button class="nav-toggle" aria-label="Menu">&#9776;</button>
-    <div id="main-nav"></div>
-  </nav>
+<div class="admin-wrap">
 
-  <div class="page-section">
-    <div class="page-title-bar fade-up">
+  <!-- ── Sidebar ──────────────────────────────────────────────────────────── -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <a href="/index.html" class="logo">&#9749; CafeBook</a>
+      <div class="admin-label">Admin Panel</div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section">Menu</div>
+      <button class="sidebar-link active" id="nav-bookings" onclick="switchTab('bookings', this)">
+        <span class="s-icon">📋</span> Bookings
+      </button>
+      <button class="sidebar-link" id="nav-tables" onclick="switchTab('tables', this)">
+        <span class="s-icon">🪑</span> Tables
+      </button>
+      <div class="sidebar-section" style="margin-top:1rem">Navigation</div>
+      <a href="/index.html"        class="sidebar-link"><span class="s-icon">🏠</span> Home</a>
+      <a href="/my-bookings.html"  class="sidebar-link"><span class="s-icon">👤</span> My Account</a>
+    </nav>
+    <div class="sidebar-bottom">
+      <button class="sidebar-link" onclick="logout()"><span class="s-icon">🚪</span> Sign Out</button>
+    </div>
+  </aside>
+
+  <!-- ── Main ─────────────────────────────────────────────────────────────── -->
+  <div class="admin-main">
+
+    <!-- Header -->
+    <div class="admin-header">
       <div>
-        <p class="page-subtitle">Administration</p>
-        <h1 class="page-title">Dashboard</h1>
+        <h1 id="page-heading">Bookings</h1>
+        <div class="header-meta" id="page-sub">Manage all reservations</div>
+      </div>
+      <div class="header-right">
+        <div class="header-date" id="today-label"></div>
       </div>
     </div>
 
-    <div id="alert-box"></div>
-    <div class="stat-row fade-up-d1" id="stat-row"></div>
-
-    <div class="tabs fade-up-d2">
-      <button class="tab-btn active" onclick="switchTab('bookings', this)">Bookings</button>
-      <button class="tab-btn"        onclick="switchTab('tables',   this)">Tables</button>
+    <!-- Stats -->
+    <div class="stats-grid" id="stats-grid">
+      <div class="stat-box"><div class="stat-icon blue">📅</div><div><div class="stat-num" id="s-total">—</div><div class="stat-lbl">Total Bookings</div></div></div>
+      <div class="stat-box"><div class="stat-icon green">✅</div><div><div class="stat-num" id="s-confirmed">—</div><div class="stat-lbl">Confirmed</div></div></div>
+      <div class="stat-box"><div class="stat-icon yellow">⏳</div><div><div class="stat-num" id="s-pending">—</div><div class="stat-lbl">Pending</div></div></div>
+      <div class="stat-box"><div class="stat-icon red">☕</div><div><div class="stat-num" id="s-today">—</div><div class="stat-lbl">Today</div></div></div>
     </div>
 
-    <!-- ── Bookings tab ── -->
-    <div id="tab-bookings">
-      <div class="admin-filter-row">
-        <div class="form-group" style="margin-bottom:0">
-          <label>Search</label>
-          <input id="booking-search" placeholder="Name, email, seat number…" oninput="filterBookings()">
-        </div>
-        <div class="form-group" style="margin-bottom:0">
-          <label>Status</label>
-          <select id="status-filter" onchange="filterBookings()">
-            <option value="">All Statuses</option>
-            <option>PENDING</option><option>CONFIRMED</option>
-            <option>COMPLETED</option><option>CANCELLED</option><option>NO_SHOW</option>
-          </select>
-        </div>
-        <div class="form-group" style="margin-bottom:0">
-          <label>Date</label>
-          <input type="date" id="date-filter" oninput="filterBookings()">
-        </div>
+    <!-- Content -->
+    <div class="admin-content">
+      <div id="alert-box"></div>
+
+      <!-- Tab bar -->
+      <div class="tab-bar">
+        <button class="tab-btn active" id="tab-btn-bookings" onclick="switchTab('bookings', this)">📋 Bookings</button>
+        <button class="tab-btn"        id="tab-btn-tables"   onclick="switchTab('tables',   this)">🪑 Tables</button>
       </div>
-      <div id="bookings-list"><p class="text-muted" style="padding:1rem 0">Loading…</p></div>
-    </div>
 
-    <!-- ── Tables tab ── -->
-    <div id="tab-tables" style="display:none">
-      <div class="card card-accent" style="margin-bottom:1.5rem">
-        <h3 style="font-family:'Playfair Display',serif;font-weight:600;margin-bottom:1.2rem;font-size:1.1rem">
-          Add New Table
-        </h3>
-        <form id="add-table-form" class="add-table-form">
-          <div class="form-group"><label>Table No.</label><input id="t-num" required placeholder="e.g. W3"></div>
-          <div class="form-group"><label>Min Seats</label><input type="number" id="t-min" min="1" value="2"></div>
-          <div class="form-group"><label>Max Seats</label><input type="number" id="t-max" min="1" value="4"></div>
+      <!-- ── Bookings tab ──────────────────────────────────────────────────── -->
+      <div id="tab-bookings">
+        <div class="filter-bar">
           <div class="form-group">
-            <label>Type</label>
-            <select id="t-type">
-              <option>STANDARD</option><option>GROUP</option>
-              <option>PRIVATE</option><option>MERGED</option>
+            <label>Search</label>
+            <input id="booking-search" placeholder="Name, email, seat…" oninput="filterBookings()">
+          </div>
+          <div class="form-group">
+            <label>Status</label>
+            <select id="status-filter" onchange="filterBookings()">
+              <option value="">All Statuses</option>
+              <option>PENDING</option><option>CONFIRMED</option>
+              <option>COMPLETED</option><option>CANCELLED</option><option>NO_SHOW</option>
             </select>
           </div>
-          <div class="form-group"><label>Features</label><input id="t-feat" placeholder="optional"></div>
           <div class="form-group">
-            <label>&nbsp;</label>
-            <button class="btn btn-primary" type="submit" style="width:100%">Add Table</button>
+            <label>Date</label>
+            <input type="date" id="date-filter" oninput="filterBookings()">
           </div>
-        </form>
+        </div>
+        <div class="booking-grid" id="bookings-list">
+          <div class="empty-box"><div class="e-icon">⏳</div><p>Loading bookings…</p></div>
+        </div>
       </div>
-      <div id="tables-list"><p class="text-muted" style="padding:1rem 0">Loading…</p></div>
-    </div>
-  </div>
 
-  <div id="site-footer"></div>
-  <script src="/js/api.js"></script>
-  <script>
-    if (!requireAdmin()) throw new Error('redirect');
-    renderNav(); renderFooter();
-
-    let allBookings = [], allTables = [];
-
-    function switchTab(name, btn) {
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      document.getElementById('tab-bookings').style.display = name === 'bookings' ? 'block' : 'none';
-      document.getElementById('tab-tables').style.display   = name === 'tables'   ? 'block' : 'none';
-    }
-
-    async function loadAll() {
-      try { allBookings = await api.admin.bookings(); filterBookings(); updateStats(); } catch(e) { console.error(e); }
-      try { allTables   = await api.tables.all();     renderTables();               } catch(e) { console.error(e); }
-    }
-
-    function updateStats() {
-      const today = new Date().toISOString().split('T')[0];
-      document.getElementById('stat-row').innerHTML = [
-        { num: allBookings.length,                                              lbl: 'Total Bookings' },
-        { num: allBookings.filter(b => b.status === 'CONFIRMED').length,        lbl: 'Confirmed'      },
-        { num: allBookings.filter(b => b.status === 'PENDING').length,          lbl: 'Pending'        },
-        { num: allBookings.filter(b => b.bookingDate === today).length,         lbl: 'Today'          },
-      ].map(s =>
-        `<div class="stat-card">
-           <div class="stat-num">${s.num}</div>
-           <div class="stat-lbl">${s.lbl}</div>
-         </div>`
-      ).join('');
-    }
-
-    function filterBookings() {
-      const q      = (document.getElementById('booking-search').value || '').toLowerCase();
-      const status = document.getElementById('status-filter').value;
-      const date   = document.getElementById('date-filter').value;
-
-      const list = allBookings.filter(b => {
-        if (status && b.status !== status) return false;
-        if (date   && b.bookingDate !== date) return false;
-        if (q) {
-          const hay = [b.user?.name, b.user?.email, b.table?.tableNumber, b.bookingDate]
-            .join(' ').toLowerCase();
-          if (!hay.includes(q)) return false;
-        }
-        return true;
-      });
-
-      const el = document.getElementById('bookings-list');
-      if (list.length === 0) {
-        el.innerHTML = '<div class="empty-state"><p>No bookings match your filter.</p></div>';
-        return;
-      }
-      el.innerHTML = list.map(b => `
-        <div class="card" id="bcard-${b.id}">
-          <div class="booking-user">
-            <div>
-              <strong style="font-family:'Playfair Display',serif">${b.user ? b.user.name : 'Guest'}</strong>
-              <span class="text-muted" style="margin-left:0.5rem;font-size:0.78rem">${b.user ? b.user.email : ''}</span>
-              <span style="margin-left:0.5rem;font-size:0.68rem;color:#bbb">${bookingRef(b.id)}</span>
+      <!-- ── Tables tab ────────────────────────────────────────────────────── -->
+      <div id="tab-tables" style="display:none">
+        <div class="add-table-card">
+          <h3>➕ Add New Table</h3>
+          <form id="add-table-form">
+            <div class="add-table-grid">
+              <div class="form-group"><label>Table No.</label><input id="t-num" required placeholder="e.g. W3"></div>
+              <div class="form-group"><label>Min Seats</label><input type="number" id="t-min" min="1" value="2"></div>
+              <div class="form-group"><label>Max Seats</label><input type="number" id="t-max" min="1" value="4"></div>
+              <div class="form-group">
+                <label>Type</label>
+                <select id="t-type"><option>STANDARD</option><option>GROUP</option><option>PRIVATE</option><option>MERGED</option></select>
+              </div>
+              <div class="form-group"><label>Features</label><input id="t-feat" placeholder="optional"></div>
+              <div class="form-group">
+                <label>&nbsp;</label>
+                <button class="btn btn-primary" type="submit" style="width:100%;padding:0.55rem">Add Table</button>
+              </div>
             </div>
-            ${statusBadge(b.status)}
-          </div>
-          <p class="booking-meta">
-            Seat ${b.table ? b.table.tableNumber : '?'}
-            ${b.table && b.table.zone ? ' &bull; ' + b.table.zone.name : ''}
-            &nbsp;&bull;&nbsp; ${b.bookingDate} at ${b.bookingTime}
-            &nbsp;&bull;&nbsp; ${b.partySize} guest${b.partySize > 1 ? 's' : ''}
-          </p>
-          <div class="booking-actions">
-            <select onchange="updateStatus(${b.id}, this.value)">
-              ${['PENDING','CONFIRMED','COMPLETED','NO_SHOW','CANCELLED']
-                .map(s => `<option value="${s}" ${b.status === s ? 'selected' : ''}>${s}</option>`)
-                .join('')}
-            </select>
-          </div>
-        </div>`).join('');
-    }
+          </form>
+        </div>
+        <div class="tables-grid" id="tables-list">
+          <div class="empty-box"><div class="e-icon">⏳</div><p>Loading tables…</p></div>
+        </div>
+      </div>
 
-    async function updateStatus(id, status) {
-      try {
-        const updated = await api.admin.updateStatus(id, status);
-        const idx = allBookings.findIndex(b => b.id === id);
-        if (idx !== -1) allBookings[idx] = updated;
-        filterBookings(); updateStats();
-        showToast('Status updated to ' + status, 'success');
-      } catch(err) { showToast(err.message, 'error'); }
-    }
+    </div><!-- /admin-content -->
+  </div><!-- /admin-main -->
+</div><!-- /admin-wrap -->
 
-    function renderTables() {
-      const el = document.getElementById('tables-list');
-      if (allTables.length === 0) {
-        el.innerHTML = '<div class="empty-state"><p>No tables configured yet.</p></div>';
-        return;
+<script src="/js/api.js"></script>
+<script>
+  if (!requireAdmin()) throw new Error('redirect');
+
+  // Set today label
+  document.getElementById('today-label').textContent =
+    new Date().toLocaleDateString('en-GB', { weekday:'short', day:'numeric', month:'long', year:'numeric' });
+
+  let allBookings = [], allTables = [];
+  let activeTab = 'bookings';
+
+  function switchTab(name, btn) {
+    activeTab = name;
+    document.getElementById('tab-bookings').style.display = name === 'bookings' ? 'block' : 'none';
+    document.getElementById('tab-tables').style.display   = name === 'tables'   ? 'block' : 'none';
+
+    // Tab bar buttons
+    document.getElementById('tab-btn-bookings').classList.toggle('active', name === 'bookings');
+    document.getElementById('tab-btn-tables').classList.toggle('active',   name === 'tables');
+
+    // Sidebar links
+    document.getElementById('nav-bookings').classList.toggle('active', name === 'bookings');
+    document.getElementById('nav-tables').classList.toggle('active',   name === 'tables');
+
+    document.getElementById('page-heading').textContent = name === 'bookings' ? 'Bookings' : 'Tables';
+    document.getElementById('page-sub').textContent     = name === 'bookings' ? 'Manage all reservations' : 'Manage seating';
+  }
+
+  async function loadAll() {
+    try { allBookings = await api.admin.bookings(); filterBookings(); updateStats(); } catch(e) { console.error(e); }
+    try { allTables   = await api.tables.all();     renderTables();                 } catch(e) { console.error(e); }
+  }
+
+  function updateStats() {
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('s-total').textContent     = allBookings.length;
+    document.getElementById('s-confirmed').textContent = allBookings.filter(b => b.status === 'CONFIRMED').length;
+    document.getElementById('s-pending').textContent   = allBookings.filter(b => b.status === 'PENDING').length;
+    document.getElementById('s-today').textContent     = allBookings.filter(b => b.bookingDate === today).length;
+  }
+
+  const STATUS_BADGE = {
+    CONFIRMED: 'badge-green', PENDING: 'badge-yellow',
+    CANCELLED: 'badge-red',   COMPLETED: 'badge-blue', NO_SHOW: 'badge-gray'
+  };
+
+  function filterBookings() {
+    const q      = (document.getElementById('booking-search').value || '').toLowerCase();
+    const status = document.getElementById('status-filter').value;
+    const date   = document.getElementById('date-filter').value;
+
+    const list = allBookings.filter(b => {
+      if (status && b.status !== status) return false;
+      if (date   && b.bookingDate !== date) return false;
+      if (q) {
+        const hay = [b.user?.name, b.user?.email, b.table?.tableNumber, b.bookingDate].join(' ').toLowerCase();
+        if (!hay.includes(q)) return false;
       }
-      el.innerHTML = allTables.map(t => `
-        <div class="card" id="tcard-${t.id}"
-             style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.8rem">
-          <div>
-            <strong style="font-family:'Playfair Display',serif">Seat ${t.tableNumber}</strong>
-            <span class="text-muted" style="margin-left:0.5rem">
-              ${t.type} &bull; ${t.minCapacity}&ndash;${t.maxCapacity} seats
-            </span>
-            ${t.isAccessible ? '<span class="badge badge-blue" style="margin-left:0.5rem">Accessible</span>' : ''}
-            ${t.specialFeatures ? `<span class="text-muted" style="margin-left:0.4rem;font-size:0.78rem">${t.specialFeatures}</span>` : ''}
-          </div>
-          <div style="display:flex;gap:0.5rem">
-            <button class="btn ${t.isAvailable ? 'btn-secondary' : 'btn-gold'}" style="font-size:0.72rem"
-                    onclick="toggleTable(${t.id}, ${t.isAvailable})">
-              ${t.isAvailable ? 'Mark Unavailable' : 'Mark Available'}
-            </button>
-            <button class="btn btn-danger" style="font-size:0.72rem"
-                    onclick="deleteTable(${t.id})">Delete</button>
-          </div>
-        </div>`).join('');
-    }
-
-    document.getElementById('add-table-form').addEventListener('submit', async e => {
-      e.preventDefault();
-      const btn = e.target.querySelector('button');
-      btn.disabled = true; btn.textContent = 'Adding…';
-      try {
-        const t = await api.admin.addTable({
-          tableNumber:     document.getElementById('t-num').value,
-          minCapacity:     parseInt(document.getElementById('t-min').value),
-          maxCapacity:     parseInt(document.getElementById('t-max').value),
-          type:            document.getElementById('t-type').value,
-          isAccessible:    false,
-          isAvailable:     true,
-          specialFeatures: document.getElementById('t-feat').value || null,
-        });
-        allTables.push(t); renderTables(); e.target.reset();
-        showToast('Table ' + t.tableNumber + ' added.', 'success');
-      } catch(err) { showToast(err.message, 'error'); }
-      btn.disabled = false; btn.textContent = 'Add Table';
+      return true;
     });
 
-    async function toggleTable(id, current) {
-      try {
-        const updated = await api.admin.toggleTable(id, !current);
-        const idx = allTables.findIndex(t => t.id === id);
-        if (idx !== -1) allTables[idx] = updated;
-        renderTables(); showToast('Table availability updated.', 'success');
-      } catch(err) { showToast(err.message, 'error'); }
+    const el = document.getElementById('bookings-list');
+    if (list.length === 0) {
+      el.innerHTML = '<div class="empty-box"><div class="e-icon">🔍</div><p>No bookings match your filter.</p></div>';
+      return;
     }
+    el.innerHTML = list.map(b => `
+      <div class="b-card" id="bcard-${b.id}">
+        <div class="b-card-left">
+          <div class="b-card-top">
+            <span class="b-name">${b.user ? b.user.name : 'Guest'}</span>
+            <span class="b-email">${b.user ? b.user.email : ''}</span>
+            <span class="b-ref">${bookingRef(b.id)}</span>
+            <span class="badge ${STATUS_BADGE[b.status] || 'badge-gray'}">${b.status}</span>
+          </div>
+          <div class="b-meta">
+            <span>🪑 Seat ${b.table ? b.table.tableNumber : '?'}${b.table?.zone ? ' · ' + b.table.zone.name : ''}</span>
+            <span>📅 ${b.bookingDate}</span>
+            <span>🕐 ${formatTime12(b.bookingTime)}</span>
+            <span>👥 ${b.partySize} guest${b.partySize > 1 ? 's' : ''}</span>
+          </div>
+        </div>
+        <div class="b-card-right">
+          <select class="status-select" onchange="updateStatus(${b.id}, this.value)">
+            ${['PENDING','CONFIRMED','COMPLETED','NO_SHOW','CANCELLED']
+              .map(s => `<option value="${s}" ${b.status === s ? 'selected' : ''}>${s}</option>`).join('')}
+          </select>
+        </div>
+      </div>`).join('');
+  }
 
-    async function deleteTable(id) {
-      if (!confirm('Delete this table? This cannot be undone.')) return;
-      try {
-        await api.admin.deleteTable(id);
-        allTables = allTables.filter(t => t.id !== id);
-        renderTables(); showToast('Table deleted.', 'success');
-      } catch(err) { showToast(err.message, 'error'); }
+  async function updateStatus(id, status) {
+    try {
+      const updated = await api.admin.updateStatus(id, status);
+      const idx = allBookings.findIndex(b => b.id === id);
+      if (idx !== -1) allBookings[idx] = updated;
+      filterBookings(); updateStats();
+      showToast('Status updated to ' + status, 'success');
+    } catch(err) { showToast(err.message, 'error'); }
+  }
+
+  function renderTables() {
+    const el = document.getElementById('tables-list');
+    if (allTables.length === 0) {
+      el.innerHTML = '<div class="empty-box"><div class="e-icon">🪑</div><p>No tables configured yet.</p></div>';
+      return;
     }
+    el.innerHTML = allTables.map(t => `
+      <div class="t-card" id="tcard-${t.id}">
+        <div class="t-card-top">
+          <div class="t-number">Seat ${t.tableNumber}</div>
+          <span class="t-avail ${t.isAvailable ? 'yes' : 'no'}">${t.isAvailable ? 'Available' : 'Unavailable'}</span>
+        </div>
+        <div class="t-info">
+          ${t.zone ? t.zone.name + ' · ' : ''}${t.type} · ${t.minCapacity}–${t.maxCapacity} guests
+          ${t.isAccessible ? ' · ♿ Accessible' : ''}
+          ${t.specialFeatures ? '<br><span style="color:#bbb">' + t.specialFeatures + '</span>' : ''}
+        </div>
+        <div class="t-actions">
+          <button class="btn-sm ${t.isAvailable ? 'toggle-on' : 'toggle-off'}" onclick="toggleTable(${t.id}, ${t.isAvailable})">
+            ${t.isAvailable ? 'Mark Unavailable' : 'Mark Available'}
+          </button>
+          <button class="btn-sm del" onclick="deleteTable(${t.id})">Delete</button>
+        </div>
+      </div>`).join('');
+  }
 
-    loadAll();
-  </script>
+  document.getElementById('add-table-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    const btn = e.target.querySelector('button');
+    btn.disabled = true; btn.textContent = 'Adding…';
+    try {
+      const t = await api.admin.addTable({
+        tableNumber:     document.getElementById('t-num').value,
+        minCapacity:     parseInt(document.getElementById('t-min').value),
+        maxCapacity:     parseInt(document.getElementById('t-max').value),
+        type:            document.getElementById('t-type').value,
+        isAccessible:    false,
+        isAvailable:     true,
+        specialFeatures: document.getElementById('t-feat').value || null,
+      });
+      allTables.push(t); renderTables(); e.target.reset();
+      showToast('Table ' + t.tableNumber + ' added.', 'success');
+    } catch(err) { showToast(err.message, 'error'); }
+    btn.disabled = false; btn.textContent = 'Add Table';
+  });
+
+  async function toggleTable(id, current) {
+    try {
+      const updated = await api.admin.toggleTable(id, !current);
+      const idx = allTables.findIndex(t => t.id === id);
+      if (idx !== -1) allTables[idx] = updated;
+      renderTables(); showToast('Table availability updated.', 'success');
+    } catch(err) { showToast(err.message, 'error'); }
+  }
+
+  async function deleteTable(id) {
+    if (!confirm('Delete this table? This cannot be undone.')) return;
+    try {
+      await api.admin.deleteTable(id);
+      allTables = allTables.filter(t => t.id !== id);
+      renderTables(); showToast('Table deleted.', 'success');
+    } catch(err) { showToast(err.message, 'error'); }
+  }
+
+  loadAll();
+</script>
 </body>
 </html>
