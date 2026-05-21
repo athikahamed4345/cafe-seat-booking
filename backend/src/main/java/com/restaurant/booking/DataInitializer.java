@@ -24,10 +24,10 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        if (userRepo.findByEmail("admin@cafe.com").isEmpty()) {
+        if (userRepo.findByEmail("admin@cafebook.com").isEmpty()) {
             User admin = new User();
             admin.setName("Admin");
-            admin.setEmail("admin@cafe.com");
+            admin.setEmail("admin@cafebook.com");
             admin.setPassword(passwordEncoder.encode("admin123"));
             admin.setRole(User.Role.ADMIN);
             admin.setEmailVerified(true);

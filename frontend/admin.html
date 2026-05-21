@@ -6,450 +6,525 @@
   <title>Admin Dashboard — CafeBook</title>
   <link rel="stylesheet" href="/css/style.css">
   <style>
-    /* ── Admin Layout ──────────────────────────────────────────────────────── */
-    body { background: #f0ebe4; }
+    body { background: #f0ebe4; margin: 0; }
 
-    .admin-wrap {
-      display: flex;
-      min-height: 100vh;
-    }
+    /* ════════════════════════════════════════════════════════════
+       SIDEBAR
+    ════════════════════════════════════════════════════════════ */
+    .admin-wrap { display: flex; min-height: 100vh; }
 
-    /* ── Sidebar ────────────────────────────────────────────────────────────── */
     .sidebar {
-      width: 240px;
-      background: #1a0f00;
-      display: flex;
-      flex-direction: column;
-      position: fixed;
-      top: 0; left: 0; bottom: 0;
+      width: 250px; flex-shrink: 0;
+      background: linear-gradient(180deg, #1c0e00 0%, #2d1a08 60%, #1c0e00 100%);
+      display: flex; flex-direction: column;
+      position: fixed; top: 0; left: 0; bottom: 0;
       z-index: 300;
-      box-shadow: 4px 0 20px rgba(0,0,0,0.3);
-      flex-shrink: 0;
+      box-shadow: 4px 0 24px rgba(0,0,0,0.4);
     }
+
     .sidebar-brand {
-      padding: 1.6rem 1.5rem 1.2rem;
-      border-bottom: 1px solid rgba(201,169,110,0.15);
+      padding: 1.8rem 1.6rem 1.4rem;
+      border-bottom: 1px solid rgba(201,169,110,0.18);
+      background: rgba(0,0,0,0.2);
     }
-    .sidebar-brand .logo {
+    .sidebar-brand .s-logo {
       font-family: 'Playfair Display', serif;
-      font-size: 1.4rem;
-      color: #c9a96e;
-      text-decoration: none;
-      display: block;
+      font-size: 1.5rem; font-weight: 700;
+      color: #c9a96e; text-decoration: none;
+      display: flex; align-items: center; gap: 0.5rem;
     }
-    .sidebar-brand .admin-label {
-      font-size: 0.65rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: rgba(201,169,110,0.5);
-      margin-top: 4px;
+    .sidebar-brand .s-pill {
+      display: inline-block; margin-top: 6px;
+      background: rgba(201,169,110,0.15);
+      border: 1px solid rgba(201,169,110,0.3);
+      color: #c9a96e; font-size: 0.6rem;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      padding: 2px 10px; border-radius: 20px;
     }
-    .sidebar-nav {
-      padding: 1.2rem 0;
-      flex: 1;
+
+    .sidebar-nav { padding: 1.4rem 0; flex: 1; overflow-y: auto; }
+
+    .s-section {
+      font-size: 0.58rem; letter-spacing: 0.18em; text-transform: uppercase;
+      color: rgba(201,169,110,0.35); padding: 0.9rem 1.6rem 0.4rem;
+      font-weight: 700;
     }
-    .sidebar-section {
-      font-size: 0.6rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.25);
-      padding: 0.8rem 1.5rem 0.4rem;
-      font-weight: 600;
-    }
-    .sidebar-link {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      padding: 0.7rem 1.5rem;
-      color: rgba(255,255,255,0.6);
-      text-decoration: none;
-      font-size: 0.82rem;
-      font-weight: 500;
-      cursor: pointer;
-      border: none;
-      background: none;
-      width: 100%;
-      text-align: left;
+    .s-link {
+      display: flex; align-items: center; gap: 0.85rem;
+      padding: 0.75rem 1.6rem;
+      color: rgba(255,255,255,0.55);
+      text-decoration: none; cursor: pointer;
+      border: none; background: none; width: 100%; text-align: left;
+      font-size: 0.85rem; font-weight: 500;
       transition: all 0.2s;
       border-left: 3px solid transparent;
+      border-radius: 0;
+      font-family: 'Montserrat', sans-serif;
     }
-    .sidebar-link:hover { color: #c9a96e; background: rgba(201,169,110,0.06); }
-    .sidebar-link.active { color: #c9a96e; background: rgba(201,169,110,0.1); border-left-color: #c9a96e; }
-    .sidebar-link .s-icon { font-size: 1rem; width: 20px; text-align: center; }
-    .sidebar-bottom {
+    .s-link:hover {
+      color: #e8c98c;
+      background: rgba(201,169,110,0.08);
+    }
+    .s-link.active {
+      color: #f0d9a8;
+      background: linear-gradient(90deg, rgba(201,169,110,0.18) 0%, transparent 100%);
+      border-left-color: #c9a96e;
+    }
+    .s-icon { font-size: 1.05rem; width: 22px; text-align: center; flex-shrink: 0; }
+
+    .sidebar-footer {
       padding: 1rem 0;
-      border-top: 1px solid rgba(201,169,110,0.1);
+      border-top: 1px solid rgba(201,169,110,0.12);
+      background: rgba(0,0,0,0.15);
     }
 
-    /* ── Main content ───────────────────────────────────────────────────────── */
-    .admin-main {
-      margin-left: 240px;
-      flex: 1;
-      min-width: 0;
-    }
-    .admin-header {
+    /* ════════════════════════════════════════════════════════════
+       MAIN
+    ════════════════════════════════════════════════════════════ */
+    .admin-main { margin-left: 250px; flex: 1; min-width: 0; }
+
+    .admin-topbar {
       background: #fff;
-      padding: 1.2rem 2rem;
+      padding: 0 2rem;
+      height: 66px;
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 100;
       border-bottom: 1px solid #e8dece;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      box-shadow: 0 2px 12px rgba(139,90,43,0.07);
     }
-    .admin-header h1 {
+    .topbar-left h1 {
       font-family: 'Playfair Display', serif;
-      font-size: 1.35rem;
-      color: #1a0f00;
-      font-weight: 600;
+      font-size: 1.3rem; color: #1c0e00; font-weight: 700;
     }
-    .admin-header .header-meta {
-      font-size: 0.78rem;
-      color: #999;
-      margin-top: 1px;
+    .topbar-left .t-crumb {
+      font-size: 0.72rem; color: #aaa; margin-top: 1px;
     }
-    .header-right { display: flex; align-items: center; gap: 1rem; }
-    .header-date {
-      font-size: 0.78rem;
-      color: #888;
-      background: #f5f0ea;
-      padding: 0.35rem 0.8rem;
-      border-radius: 20px;
+    .topbar-right { display: flex; align-items: center; gap: 0.9rem; }
+    .t-date {
+      font-size: 0.76rem; color: #888;
+      background: #f8f3ec; border: 1px solid #ede0cc;
+      padding: 0.3rem 0.85rem; border-radius: 20px;
+    }
+    .t-avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: linear-gradient(135deg, #c9a96e, #8B5E2A);
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-size: 0.8rem; font-weight: 700;
+      flex-shrink: 0;
     }
 
-    /* ── Stats ──────────────────────────────────────────────────────────────── */
-    .stats-grid {
+    /* ════════════════════════════════════════════════════════════
+       STATS
+    ════════════════════════════════════════════════════════════ */
+    .stats-row {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 1.2rem;
       padding: 1.8rem 2rem 0;
     }
-    .stat-box {
-      background: #fff;
-      border-radius: 12px;
-      padding: 1.3rem 1.5rem;
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      border: 1px solid #ede5d8;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    .stat-card {
+      border-radius: 14px;
+      padding: 1.4rem 1.6rem;
+      display: flex; align-items: center; gap: 1rem;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+      position: relative; overflow: hidden;
     }
-    .stat-icon {
-      width: 48px; height: 48px;
-      border-radius: 12px;
+    .stat-card::after {
+      content: ''; position: absolute;
+      top: -30px; right: -20px;
+      width: 90px; height: 90px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.08);
+    }
+    .stat-card.c1 { background: linear-gradient(135deg, #3d5a99, #2c4380); color: #fff; }
+    .stat-card.c2 { background: linear-gradient(135deg, #27855a, #1a6044); color: #fff; }
+    .stat-card.c3 { background: linear-gradient(135deg, #c9820a, #a56008); color: #fff; }
+    .stat-card.c4 { background: linear-gradient(135deg, #8b4513, #6b3210); color: #fff; }
+
+    .stat-icon-wrap {
+      width: 52px; height: 52px; border-radius: 12px;
+      background: rgba(255,255,255,0.18);
       display: flex; align-items: center; justify-content: center;
-      font-size: 1.3rem;
-      flex-shrink: 0;
+      font-size: 1.4rem; flex-shrink: 0;
     }
-    .stat-icon.green  { background: #e8f5e9; }
-    .stat-icon.blue   { background: #e3f2fd; }
-    .stat-icon.yellow { background: #fff8e1; }
-    .stat-icon.red    { background: #fce4ec; }
-    .stat-num { font-size: 1.8rem; font-weight: 700; color: #1a0f00; line-height: 1; }
-    .stat-lbl { font-size: 0.76rem; color: #999; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .stat-body .s-num {
+      font-size: 2rem; font-weight: 800; line-height: 1;
+      font-family: 'Playfair Display', serif;
+    }
+    .stat-body .s-lbl {
+      font-size: 0.7rem; opacity: 0.8;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      margin-top: 3px;
+    }
 
-    /* ── Content area ───────────────────────────────────────────────────────── */
-    .admin-content { padding: 1.8rem 2rem; }
+    /* ════════════════════════════════════════════════════════════
+       CONTENT AREA
+    ════════════════════════════════════════════════════════════ */
+    .admin-body { padding: 1.8rem 2rem; }
 
-    /* ── Tab bar ────────────────────────────────────────────────────────────── */
-    .tab-bar {
-      display: flex;
-      gap: 0;
-      border-bottom: 2px solid #e8dece;
-      margin-bottom: 1.5rem;
+    /* Tab bar */
+    .tab-strip {
+      display: flex; gap: 0;
+      background: #fff;
+      border: 1px solid #ede0cc;
+      border-radius: 10px;
+      padding: 5px;
+      margin-bottom: 1.6rem;
+      width: fit-content;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     }
     .tab-btn {
-      padding: 0.7rem 1.5rem;
-      font-size: 0.83rem;
-      font-weight: 600;
-      color: #888;
-      background: none;
-      border: none;
-      cursor: pointer;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      border-bottom: 2px solid transparent;
-      margin-bottom: -2px;
+      padding: 0.55rem 1.4rem;
+      font-size: 0.8rem; font-weight: 600;
+      color: #999; background: none;
+      border: none; cursor: pointer;
+      border-radius: 7px;
       transition: all 0.2s;
+      letter-spacing: 0.04em;
+      font-family: 'Montserrat', sans-serif;
     }
-    .tab-btn:hover { color: #6b4c2a; }
-    .tab-btn.active { color: #6b4c2a; border-bottom-color: #c9a96e; }
+    .tab-btn:hover { color: #6b3a1f; background: #f8f0e6; }
+    .tab-btn.active {
+      background: linear-gradient(135deg, #8b4513, #c9820a);
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(139,69,19,0.3);
+    }
 
-    /* ── Filter row ─────────────────────────────────────────────────────────── */
-    .filter-bar {
-      display: flex;
-      gap: 0.8rem;
-      margin-bottom: 1.2rem;
-      flex-wrap: wrap;
-      align-items: flex-end;
+    /* ════════════════════════════════════════════════════════════
+       FILTER BAR
+    ════════════════════════════════════════════════════════════ */
+    .filter-row {
+      display: flex; gap: 0.85rem;
+      margin-bottom: 1.3rem; flex-wrap: wrap; align-items: flex-end;
     }
-    .filter-bar .form-group { margin-bottom: 0; flex: 1; min-width: 140px; }
-    .filter-bar input, .filter-bar select {
-      background: #fff;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      padding: 0.55rem 0.9rem;
-      font-size: 0.84rem;
-      width: 100%;
+    .filter-row .fg { flex: 1; min-width: 130px; }
+    .filter-row label {
+      font-size: 0.68rem; color: #aaa; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      display: block; margin-bottom: 5px;
     }
-    .filter-bar label { font-size: 0.72rem; color: #888; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 5px; display: block; }
+    .filter-row input, .filter-row select {
+      width: 100%; background: #fff;
+      border: 1.5px solid #e8dece; border-radius: 8px;
+      padding: 0.55rem 0.9rem; font-size: 0.84rem; color: #333;
+      transition: border-color 0.2s;
+      font-family: 'Montserrat', sans-serif;
+    }
+    .filter-row input:focus, .filter-row select:focus {
+      border-color: #c9a96e; outline: none;
+    }
 
-    /* ── Booking cards ──────────────────────────────────────────────────────── */
-    .booking-grid { display: flex; flex-direction: column; gap: 0.7rem; }
+    /* ════════════════════════════════════════════════════════════
+       BOOKING CARDS
+    ════════════════════════════════════════════════════════════ */
+    .b-list { display: flex; flex-direction: column; gap: 0.75rem; }
+
     .b-card {
       background: #fff;
-      border-radius: 10px;
-      border: 1px solid #ede5d8;
-      padding: 1rem 1.3rem;
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 0.5rem 1rem;
-      align-items: center;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
-      transition: box-shadow 0.2s;
-    }
-    .b-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
-    .b-card-left { min-width: 0; }
-    .b-card-top { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 4px; }
-    .b-name { font-family: 'Playfair Display', serif; font-weight: 600; font-size: 1rem; color: #1a0f00; }
-    .b-email { font-size: 0.76rem; color: #aaa; }
-    .b-ref { font-size: 0.68rem; color: #ccc; background: #f5f0ea; padding: 2px 7px; border-radius: 10px; }
-    .b-meta { font-size: 0.8rem; color: #888; display: flex; gap: 1rem; flex-wrap: wrap; }
-    .b-meta span { display: flex; align-items: center; gap: 4px; }
-    .b-card-right { display: flex; align-items: center; gap: 0.6rem; flex-shrink: 0; }
-    .status-select {
-      font-size: 0.75rem;
-      border: 1px solid #ddd;
-      border-radius: 6px;
-      padding: 0.35rem 0.6rem;
-      background: #fafafa;
-      color: #333;
-      cursor: pointer;
-    }
-
-    /* ── Tables list ────────────────────────────────────────────────────────── */
-    .add-table-card {
-      background: #fff;
       border-radius: 12px;
-      border: 1px solid #ede5d8;
-      padding: 1.4rem 1.5rem;
-      margin-bottom: 1.5rem;
+      border: 1px solid #ede0cc;
+      border-left: 4px solid #c9a96e;
+      padding: 1.1rem 1.4rem;
+      display: flex; align-items: center; gap: 1rem;
+      box-shadow: 0 2px 8px rgba(139,90,43,0.05);
+      transition: transform 0.15s, box-shadow 0.15s;
     }
-    .add-table-card h3 {
+    .b-card:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(139,90,43,0.1);
+    }
+    .b-card.st-CONFIRMED { border-left-color: #27855a; }
+    .b-card.st-PENDING   { border-left-color: #c9820a; }
+    .b-card.st-CANCELLED { border-left-color: #b71c1c; }
+    .b-card.st-COMPLETED { border-left-color: #2c4380; }
+    .b-card.st-NO_SHOW   { border-left-color: #888; }
+
+    .b-avatar {
+      width: 42px; height: 42px; border-radius: 50%;
+      background: linear-gradient(135deg, #f5e6d0, #e8c98c);
+      display: flex; align-items: center; justify-content: center;
       font-family: 'Playfair Display', serif;
-      font-size: 1.05rem;
-      color: #1a0f00;
-      margin-bottom: 1.1rem;
+      font-size: 1rem; font-weight: 700; color: #8b4513;
+      flex-shrink: 0;
     }
-    .add-table-grid {
+    .b-info { flex: 1; min-width: 0; }
+    .b-row1 { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 4px; }
+    .b-name { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 600; color: #1c0e00; }
+    .b-email { font-size: 0.75rem; color: #bbb; }
+    .b-ref {
+      font-size: 0.65rem; background: #f5f0ea;
+      border: 1px solid #e8dece; color: #aaa;
+      padding: 1px 8px; border-radius: 10px;
+    }
+    .b-row2 { display: flex; gap: 1.2rem; flex-wrap: wrap; }
+    .b-chip {
+      font-size: 0.77rem; color: #888;
+      display: flex; align-items: center; gap: 4px;
+    }
+    .b-right { display: flex; align-items: center; gap: 0.7rem; flex-shrink: 0; }
+
+    .status-sel {
+      font-size: 0.76rem; font-weight: 600;
+      border: 1.5px solid #e8dece; border-radius: 8px;
+      padding: 0.38rem 0.7rem;
+      background: #fafaf8; color: #444;
+      cursor: pointer; font-family: 'Montserrat', sans-serif;
+      transition: border-color 0.2s;
+    }
+    .status-sel:focus { border-color: #c9a96e; outline: none; }
+
+    /* Badges */
+    .badge { display: inline-block; font-size: 0.65rem; font-weight: 700; padding: 3px 10px; border-radius: 20px; letter-spacing: 0.04em; text-transform: uppercase; }
+    .bg-green  { background: #e6f4ec; color: #1a6044; }
+    .bg-yellow { background: #fef9e7; color: #8a6000; }
+    .bg-red    { background: #fce4ec; color: #b71c1c; }
+    .bg-blue   { background: #e8eef8; color: #2c4380; }
+    .bg-gray   { background: #f0f0f0; color: #666; }
+
+    /* ════════════════════════════════════════════════════════════
+       TABLES SECTION
+    ════════════════════════════════════════════════════════════ */
+    .add-card {
+      background: #fff;
+      border-radius: 14px;
+      border: 1px solid #ede0cc;
+      padding: 1.5rem 1.8rem;
+      margin-bottom: 1.6rem;
+      box-shadow: 0 2px 8px rgba(139,90,43,0.05);
+    }
+    .add-card h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem; color: #1c0e00;
+      margin-bottom: 1.2rem;
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .add-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-      gap: 0.8rem;
-      align-items: end;
+      gap: 0.9rem; align-items: end;
     }
-    .add-table-grid .form-group { margin: 0; }
-    .add-table-grid label { font-size: 0.72rem; color: #888; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; display: block; margin-bottom: 5px; }
-    .add-table-grid input, .add-table-grid select {
-      width: 100%; border: 1px solid #ddd; border-radius: 8px;
-      padding: 0.55rem 0.8rem; font-size: 0.84rem;
+    .add-grid .fg { }
+    .add-grid label {
+      font-size: 0.68rem; color: #aaa; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      display: block; margin-bottom: 5px;
     }
+    .add-grid input, .add-grid select {
+      width: 100%; border: 1.5px solid #e8dece;
+      border-radius: 8px; padding: 0.55rem 0.8rem;
+      font-size: 0.84rem; background: #fff;
+      font-family: 'Montserrat', sans-serif;
+      transition: border-color 0.2s;
+    }
+    .add-grid input:focus, .add-grid select:focus { border-color: #c9a96e; outline: none; }
 
-    .tables-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 0.9rem; }
+    .tables-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1rem;
+    }
     .t-card {
       background: #fff;
-      border-radius: 10px;
-      border: 1px solid #ede5d8;
-      padding: 1.1rem 1.3rem;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+      border-radius: 12px;
+      border: 1px solid #ede0cc;
+      padding: 1.2rem 1.4rem;
+      box-shadow: 0 2px 8px rgba(139,90,43,0.05);
+      transition: transform 0.15s, box-shadow 0.15s;
     }
-    .t-card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; }
-    .t-number { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; color: #1a0f00; }
-    .t-avail { font-size: 0.72rem; font-weight: 600; padding: 3px 10px; border-radius: 20px; }
-    .t-avail.yes { background: #e8f5e9; color: #2e7d32; }
-    .t-avail.no  { background: #fce4ec; color: #b71c1c; }
-    .t-info { font-size: 0.8rem; color: #888; margin-bottom: 10px; }
-    .t-actions { display: flex; gap: 0.5rem; }
-    .btn-sm { font-size: 0.72rem; padding: 0.3rem 0.85rem; border-radius: 6px; border: 1px solid; cursor: pointer; font-weight: 600; transition: all 0.2s; }
-    .btn-sm.toggle-on  { background: #fff8e1; color: #8a6000; border-color: #f5cc5a; }
-    .btn-sm.toggle-on:hover  { background: #f5cc5a; }
-    .btn-sm.toggle-off { background: #e8f5e9; color: #2e7d32; border-color: #81c784; }
-    .btn-sm.toggle-off:hover { background: #81c784; color: #fff; }
-    .btn-sm.del  { background: #fff; color: #b71c1c; border-color: #ef9a9a; }
-    .btn-sm.del:hover  { background: #b71c1c; color: #fff; border-color: #b71c1c; }
-
-    /* ── Badges ─────────────────────────────────────────────────────────────── */
-    .badge { display:inline-block; font-size:0.68rem; font-weight:700; padding:2px 9px; border-radius:20px; letter-spacing:0.03em; text-transform:uppercase; }
-    .badge-green  { background:#e8f5e9; color:#2e7d32; }
-    .badge-yellow { background:#fff8e1; color:#8a6000; }
-    .badge-red    { background:#fce4ec; color:#b71c1c; }
-    .badge-blue   { background:#e3f2fd; color:#1565c0; }
-    .badge-gray   { background:#f5f5f5; color:#666; }
-
-    /* ── Empty / alert ──────────────────────────────────────────────────────── */
-    .empty-box { text-align:center; padding:3rem; color:#bbb; font-size:0.9rem; background:#fff; border-radius:10px; border:1px dashed #e0d8ce; }
-    .empty-box .e-icon { font-size:2rem; margin-bottom:0.5rem; }
-
-    /* ── Responsive ─────────────────────────────────────────────────────────── */
-    @media (max-width: 900px) {
-      .sidebar { width: 200px; }
-      .admin-main { margin-left: 200px; }
-      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .t-card:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(139,90,43,0.1); }
+    .t-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .t-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem; font-weight: 700; color: #1c0e00;
     }
-    @media (max-width: 640px) {
+    .t-pill {
+      font-size: 0.68rem; font-weight: 700; padding: 3px 11px; border-radius: 20px;
+    }
+    .t-pill.on  { background: #e6f4ec; color: #1a6044; }
+    .t-pill.off { background: #fce4ec; color: #b71c1c; }
+    .t-details { font-size: 0.79rem; color: #999; margin-bottom: 12px; line-height: 1.6; }
+    .t-zone { font-size: 0.78rem; font-weight: 600; color: #c9820a; margin-bottom: 4px; }
+    .t-btns { display: flex; gap: 0.5rem; }
+    .tbtn {
+      font-size: 0.72rem; font-weight: 600; padding: 0.35rem 0.9rem;
+      border-radius: 7px; border: 1.5px solid; cursor: pointer;
+      font-family: 'Montserrat', sans-serif; transition: all 0.2s;
+    }
+    .tbtn.disable { background: #fff8e1; color: #8a6000; border-color: #f5cc5a; }
+    .tbtn.disable:hover { background: #f5cc5a; }
+    .tbtn.enable  { background: #e6f4ec; color: #1a6044; border-color: #81c784; }
+    .tbtn.enable:hover  { background: #81c784; color: #fff; border-color: #81c784; }
+    .tbtn.del     { background: #fff; color: #b71c1c; border-color: #f5a0a0; }
+    .tbtn.del:hover     { background: #b71c1c; color: #fff; border-color: #b71c1c; }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center; padding: 3.5rem 2rem;
+      background: #fff; border-radius: 12px;
+      border: 1.5px dashed #e0d4c4; color: #c0aa90;
+    }
+    .empty-state .ei { font-size: 2.5rem; margin-bottom: 0.6rem; }
+    .empty-state p { font-size: 0.9rem; }
+
+    /* ════════════════════════════════════════════════════════════
+       RESPONSIVE
+    ════════════════════════════════════════════════════════════ */
+    @media (max-width: 960px) {
+      .stats-row { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 680px) {
       .sidebar { display: none; }
       .admin-main { margin-left: 0; }
-      .stats-grid { grid-template-columns: repeat(2, 1fr); padding: 1rem; }
-      .admin-content { padding: 1rem; }
-      .admin-header { padding: 1rem; }
+      .stats-row { grid-template-columns: repeat(2, 1fr); padding: 1rem; }
+      .admin-body { padding: 1rem; }
+      .admin-topbar { padding: 0 1rem; }
     }
   </style>
 </head>
 <body>
 <div class="admin-wrap">
 
-  <!-- ── Sidebar ──────────────────────────────────────────────────────────── -->
+  <!-- ══ SIDEBAR ═══════════════════════════════════════════════════════════ -->
   <aside class="sidebar">
     <div class="sidebar-brand">
-      <a href="/index.html" class="logo">&#9749; CafeBook</a>
-      <div class="admin-label">Admin Panel</div>
+      <a href="/index.html" class="s-logo">&#9749; CafeBook</a>
+      <div class="s-pill">Admin Panel</div>
     </div>
+
     <nav class="sidebar-nav">
-      <div class="sidebar-section">Menu</div>
-      <button class="sidebar-link active" id="nav-bookings" onclick="switchTab('bookings', this)">
+      <div class="s-section">Manage</div>
+      <button class="s-link active" id="nav-bookings" onclick="switchTab('bookings')">
         <span class="s-icon">📋</span> Bookings
       </button>
-      <button class="sidebar-link" id="nav-tables" onclick="switchTab('tables', this)">
+      <button class="s-link" id="nav-tables" onclick="switchTab('tables')">
         <span class="s-icon">🪑</span> Tables
       </button>
-      <div class="sidebar-section" style="margin-top:1rem">Navigation</div>
-      <a href="/index.html"        class="sidebar-link"><span class="s-icon">🏠</span> Home</a>
-      <a href="/my-bookings.html"  class="sidebar-link"><span class="s-icon">👤</span> My Account</a>
+
+      <div class="s-section" style="margin-top:0.8rem">Site</div>
+      <a href="/index.html"       class="s-link"><span class="s-icon">🏠</span> Home</a>
+      <a href="/book.html"        class="s-link"><span class="s-icon">📅</span> Reservations</a>
+      <a href="/my-bookings.html" class="s-link"><span class="s-icon">👤</span> My Account</a>
     </nav>
-    <div class="sidebar-bottom">
-      <button class="sidebar-link" onclick="logout()"><span class="s-icon">🚪</span> Sign Out</button>
+
+    <div class="sidebar-footer">
+      <button class="s-link" onclick="logout()"><span class="s-icon">🚪</span> Sign Out</button>
     </div>
   </aside>
 
-  <!-- ── Main ─────────────────────────────────────────────────────────────── -->
+  <!-- ══ MAIN ══════════════════════════════════════════════════════════════ -->
   <div class="admin-main">
 
-    <!-- Header -->
-    <div class="admin-header">
-      <div>
-        <h1 id="page-heading">Bookings</h1>
-        <div class="header-meta" id="page-sub">Manage all reservations</div>
+    <!-- Top bar -->
+    <div class="admin-topbar">
+      <div class="topbar-left">
+        <h1 id="page-title">Bookings</h1>
+        <div class="t-crumb" id="page-crumb">CafeBook › Admin › Bookings</div>
       </div>
-      <div class="header-right">
-        <div class="header-date" id="today-label"></div>
+      <div class="topbar-right">
+        <div class="t-date" id="today-str"></div>
+        <div class="t-avatar">A</div>
       </div>
     </div>
 
     <!-- Stats -->
-    <div class="stats-grid" id="stats-grid">
-      <div class="stat-box"><div class="stat-icon blue">📅</div><div><div class="stat-num" id="s-total">—</div><div class="stat-lbl">Total Bookings</div></div></div>
-      <div class="stat-box"><div class="stat-icon green">✅</div><div><div class="stat-num" id="s-confirmed">—</div><div class="stat-lbl">Confirmed</div></div></div>
-      <div class="stat-box"><div class="stat-icon yellow">⏳</div><div><div class="stat-num" id="s-pending">—</div><div class="stat-lbl">Pending</div></div></div>
-      <div class="stat-box"><div class="stat-icon red">☕</div><div><div class="stat-num" id="s-today">—</div><div class="stat-lbl">Today</div></div></div>
+    <div class="stats-row">
+      <div class="stat-card c1">
+        <div class="stat-icon-wrap">📊</div>
+        <div class="stat-body"><div class="s-num" id="s-total">—</div><div class="s-lbl">Total Bookings</div></div>
+      </div>
+      <div class="stat-card c2">
+        <div class="stat-icon-wrap">✅</div>
+        <div class="stat-body"><div class="s-num" id="s-confirmed">—</div><div class="s-lbl">Confirmed</div></div>
+      </div>
+      <div class="stat-card c3">
+        <div class="stat-icon-wrap">⏳</div>
+        <div class="stat-body"><div class="s-num" id="s-pending">—</div><div class="s-lbl">Pending</div></div>
+      </div>
+      <div class="stat-card c4">
+        <div class="stat-icon-wrap">☕</div>
+        <div class="stat-body"><div class="s-num" id="s-today">—</div><div class="s-lbl">Today</div></div>
+      </div>
     </div>
 
-    <!-- Content -->
-    <div class="admin-content">
+    <!-- Body -->
+    <div class="admin-body">
       <div id="alert-box"></div>
 
-      <!-- Tab bar -->
-      <div class="tab-bar">
-        <button class="tab-btn active" id="tab-btn-bookings" onclick="switchTab('bookings', this)">📋 Bookings</button>
-        <button class="tab-btn"        id="tab-btn-tables"   onclick="switchTab('tables',   this)">🪑 Tables</button>
+      <!-- Tabs -->
+      <div class="tab-strip">
+        <button class="tab-btn active" id="tb-bookings" onclick="switchTab('bookings')">📋 &nbsp;Bookings</button>
+        <button class="tab-btn"        id="tb-tables"   onclick="switchTab('tables')"  >🪑 &nbsp;Tables</button>
       </div>
 
-      <!-- ── Bookings tab ──────────────────────────────────────────────────── -->
+      <!-- ── Bookings ─────────────────────────────────────────────────── -->
       <div id="tab-bookings">
-        <div class="filter-bar">
-          <div class="form-group">
-            <label>Search</label>
-            <input id="booking-search" placeholder="Name, email, seat…" oninput="filterBookings()">
-          </div>
-          <div class="form-group">
-            <label>Status</label>
+        <div class="filter-row">
+          <div class="fg"><label>Search</label><input id="booking-search" placeholder="Name, email, seat…" oninput="filterBookings()"></div>
+          <div class="fg"><label>Status</label>
             <select id="status-filter" onchange="filterBookings()">
               <option value="">All Statuses</option>
               <option>PENDING</option><option>CONFIRMED</option>
               <option>COMPLETED</option><option>CANCELLED</option><option>NO_SHOW</option>
             </select>
           </div>
-          <div class="form-group">
-            <label>Date</label>
-            <input type="date" id="date-filter" oninput="filterBookings()">
-          </div>
+          <div class="fg"><label>Date</label><input type="date" id="date-filter" oninput="filterBookings()"></div>
         </div>
-        <div class="booking-grid" id="bookings-list">
-          <div class="empty-box"><div class="e-icon">⏳</div><p>Loading bookings…</p></div>
+        <div class="b-list" id="bookings-list">
+          <div class="empty-state"><div class="ei">⏳</div><p>Loading bookings…</p></div>
         </div>
       </div>
 
-      <!-- ── Tables tab ────────────────────────────────────────────────────── -->
+      <!-- ── Tables ───────────────────────────────────────────────────── -->
       <div id="tab-tables" style="display:none">
-        <div class="add-table-card">
+        <div class="add-card">
           <h3>➕ Add New Table</h3>
           <form id="add-table-form">
-            <div class="add-table-grid">
-              <div class="form-group"><label>Table No.</label><input id="t-num" required placeholder="e.g. W3"></div>
-              <div class="form-group"><label>Min Seats</label><input type="number" id="t-min" min="1" value="2"></div>
-              <div class="form-group"><label>Max Seats</label><input type="number" id="t-max" min="1" value="4"></div>
-              <div class="form-group">
-                <label>Type</label>
+            <div class="add-grid">
+              <div class="fg"><label>Table No.</label><input id="t-num" required placeholder="e.g. W3"></div>
+              <div class="fg"><label>Min Seats</label><input type="number" id="t-min" min="1" value="2"></div>
+              <div class="fg"><label>Max Seats</label><input type="number" id="t-max" min="1" value="4"></div>
+              <div class="fg"><label>Type</label>
                 <select id="t-type"><option>STANDARD</option><option>GROUP</option><option>PRIVATE</option><option>MERGED</option></select>
               </div>
-              <div class="form-group"><label>Features</label><input id="t-feat" placeholder="optional"></div>
-              <div class="form-group">
-                <label>&nbsp;</label>
-                <button class="btn btn-primary" type="submit" style="width:100%;padding:0.55rem">Add Table</button>
+              <div class="fg"><label>Features</label><input id="t-feat" placeholder="optional"></div>
+              <div class="fg"><label>&nbsp;</label>
+                <button class="btn btn-primary" type="submit" style="width:100%;padding:0.58rem">Add Table</button>
               </div>
             </div>
           </form>
         </div>
         <div class="tables-grid" id="tables-list">
-          <div class="empty-box"><div class="e-icon">⏳</div><p>Loading tables…</p></div>
+          <div class="empty-state"><div class="ei">⏳</div><p>Loading tables…</p></div>
         </div>
       </div>
 
-    </div><!-- /admin-content -->
-  </div><!-- /admin-main -->
-</div><!-- /admin-wrap -->
+    </div>
+  </div>
+</div>
 
 <script src="/js/api.js"></script>
 <script>
   if (!requireAdmin()) throw new Error('redirect');
 
-  // Set today label
-  document.getElementById('today-label').textContent =
+  document.getElementById('today-str').textContent =
     new Date().toLocaleDateString('en-GB', { weekday:'short', day:'numeric', month:'long', year:'numeric' });
 
   let allBookings = [], allTables = [];
-  let activeTab = 'bookings';
 
-  function switchTab(name, btn) {
-    activeTab = name;
+  function switchTab(name) {
     document.getElementById('tab-bookings').style.display = name === 'bookings' ? 'block' : 'none';
     document.getElementById('tab-tables').style.display   = name === 'tables'   ? 'block' : 'none';
-
-    // Tab bar buttons
-    document.getElementById('tab-btn-bookings').classList.toggle('active', name === 'bookings');
-    document.getElementById('tab-btn-tables').classList.toggle('active',   name === 'tables');
-
-    // Sidebar links
-    document.getElementById('nav-bookings').classList.toggle('active', name === 'bookings');
-    document.getElementById('nav-tables').classList.toggle('active',   name === 'tables');
-
-    document.getElementById('page-heading').textContent = name === 'bookings' ? 'Bookings' : 'Tables';
-    document.getElementById('page-sub').textContent     = name === 'bookings' ? 'Manage all reservations' : 'Manage seating';
+    ['bookings','tables'].forEach(t => {
+      document.getElementById('tb-'  + t).classList.toggle('active', t === name);
+      document.getElementById('nav-' + t).classList.toggle('active', t === name);
+    });
+    document.getElementById('page-title').textContent  = name === 'bookings' ? 'Bookings' : 'Tables';
+    document.getElementById('page-crumb').textContent  = 'CafeBook › Admin › ' + (name === 'bookings' ? 'Bookings' : 'Tables');
   }
 
   async function loadAll() {
-    try { allBookings = await api.admin.bookings(); filterBookings(); updateStats(); } catch(e) { console.error(e); }
-    try { allTables   = await api.tables.all();     renderTables();                 } catch(e) { console.error(e); }
+    try { allBookings = await api.admin.bookings(); filterBookings(); updateStats(); } catch(e) {}
+    try { allTables   = await api.tables.all();     renderTables();                 } catch(e) {}
   }
 
   function updateStats() {
@@ -460,17 +535,16 @@
     document.getElementById('s-today').textContent     = allBookings.filter(b => b.bookingDate === today).length;
   }
 
-  const STATUS_BADGE = {
-    CONFIRMED: 'badge-green', PENDING: 'badge-yellow',
-    CANCELLED: 'badge-red',   COMPLETED: 'badge-blue', NO_SHOW: 'badge-gray'
+  const BADGE_CLASS = {
+    CONFIRMED: 'bg-green', PENDING: 'bg-yellow',
+    CANCELLED: 'bg-red',   COMPLETED: 'bg-blue', NO_SHOW: 'bg-gray'
   };
 
   function filterBookings() {
     const q      = (document.getElementById('booking-search').value || '').toLowerCase();
     const status = document.getElementById('status-filter').value;
     const date   = document.getElementById('date-filter').value;
-
-    const list = allBookings.filter(b => {
+    const list   = allBookings.filter(b => {
       if (status && b.status !== status) return false;
       if (date   && b.bookingDate !== date) return false;
       if (q) {
@@ -482,32 +556,36 @@
 
     const el = document.getElementById('bookings-list');
     if (list.length === 0) {
-      el.innerHTML = '<div class="empty-box"><div class="e-icon">🔍</div><p>No bookings match your filter.</p></div>';
+      el.innerHTML = '<div class="empty-state"><div class="ei">🔍</div><p>No bookings match your filter.</p></div>';
       return;
     }
-    el.innerHTML = list.map(b => `
-      <div class="b-card" id="bcard-${b.id}">
-        <div class="b-card-left">
-          <div class="b-card-top">
+    el.innerHTML = list.map(b => {
+      const initials = b.user ? b.user.name.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase() : '?';
+      return `
+      <div class="b-card st-${b.status}" id="bcard-${b.id}">
+        <div class="b-avatar">${initials}</div>
+        <div class="b-info">
+          <div class="b-row1">
             <span class="b-name">${b.user ? b.user.name : 'Guest'}</span>
             <span class="b-email">${b.user ? b.user.email : ''}</span>
             <span class="b-ref">${bookingRef(b.id)}</span>
-            <span class="badge ${STATUS_BADGE[b.status] || 'badge-gray'}">${b.status}</span>
+            <span class="badge ${BADGE_CLASS[b.status] || 'bg-gray'}">${b.status}</span>
           </div>
-          <div class="b-meta">
-            <span>🪑 Seat ${b.table ? b.table.tableNumber : '?'}${b.table?.zone ? ' · ' + b.table.zone.name : ''}</span>
-            <span>📅 ${b.bookingDate}</span>
-            <span>🕐 ${formatTime12(b.bookingTime)}</span>
-            <span>👥 ${b.partySize} guest${b.partySize > 1 ? 's' : ''}</span>
+          <div class="b-row2">
+            <span class="b-chip">🪑 Seat ${b.table ? b.table.tableNumber : '?'}${b.table?.zone ? ' · ' + b.table.zone.name : ''}</span>
+            <span class="b-chip">📅 ${b.bookingDate}</span>
+            <span class="b-chip">🕐 ${formatTime12(b.bookingTime)}</span>
+            <span class="b-chip">👥 ${b.partySize} guest${b.partySize > 1 ? 's' : ''}</span>
           </div>
         </div>
-        <div class="b-card-right">
-          <select class="status-select" onchange="updateStatus(${b.id}, this.value)">
+        <div class="b-right">
+          <select class="status-sel" onchange="updateStatus(${b.id}, this.value)">
             ${['PENDING','CONFIRMED','COMPLETED','NO_SHOW','CANCELLED']
-              .map(s => `<option value="${s}" ${b.status === s ? 'selected' : ''}>${s}</option>`).join('')}
+              .map(s => `<option value="${s}" ${b.status===s?'selected':''}>${s}</option>`).join('')}
           </select>
         </div>
-      </div>`).join('');
+      </div>`;
+    }).join('');
   }
 
   async function updateStatus(id, status) {
@@ -523,32 +601,33 @@
   function renderTables() {
     const el = document.getElementById('tables-list');
     if (allTables.length === 0) {
-      el.innerHTML = '<div class="empty-box"><div class="e-icon">🪑</div><p>No tables configured yet.</p></div>';
+      el.innerHTML = '<div class="empty-state"><div class="ei">🪑</div><p>No tables configured yet.</p></div>';
       return;
     }
     el.innerHTML = allTables.map(t => `
       <div class="t-card" id="tcard-${t.id}">
-        <div class="t-card-top">
-          <div class="t-number">Seat ${t.tableNumber}</div>
-          <span class="t-avail ${t.isAvailable ? 'yes' : 'no'}">${t.isAvailable ? 'Available' : 'Unavailable'}</span>
+        <div class="t-top">
+          <div class="t-num">Seat ${t.tableNumber}</div>
+          <span class="t-pill ${t.isAvailable ? 'on' : 'off'}">${t.isAvailable ? '● Available' : '● Unavailable'}</span>
         </div>
-        <div class="t-info">
-          ${t.zone ? t.zone.name + ' · ' : ''}${t.type} · ${t.minCapacity}–${t.maxCapacity} guests
-          ${t.isAccessible ? ' · ♿ Accessible' : ''}
-          ${t.specialFeatures ? '<br><span style="color:#bbb">' + t.specialFeatures + '</span>' : ''}
+        ${t.zone ? `<div class="t-zone">📍 ${t.zone.name}</div>` : ''}
+        <div class="t-details">
+          ${t.type} &nbsp;·&nbsp; ${t.minCapacity}–${t.maxCapacity} guests
+          ${t.isAccessible ? ' &nbsp;·&nbsp; ♿ Accessible' : ''}
+          ${t.specialFeatures ? `<br>${t.specialFeatures}` : ''}
         </div>
-        <div class="t-actions">
-          <button class="btn-sm ${t.isAvailable ? 'toggle-on' : 'toggle-off'}" onclick="toggleTable(${t.id}, ${t.isAvailable})">
+        <div class="t-btns">
+          <button class="tbtn ${t.isAvailable ? 'disable' : 'enable'}" onclick="toggleTable(${t.id}, ${t.isAvailable})">
             ${t.isAvailable ? 'Mark Unavailable' : 'Mark Available'}
           </button>
-          <button class="btn-sm del" onclick="deleteTable(${t.id})">Delete</button>
+          <button class="tbtn del" onclick="deleteTable(${t.id})">Delete</button>
         </div>
       </div>`).join('');
   }
 
   document.getElementById('add-table-form').addEventListener('submit', async e => {
     e.preventDefault();
-    const btn = e.target.querySelector('button');
+    const btn = e.target.querySelector('button[type=submit]');
     btn.disabled = true; btn.textContent = 'Adding…';
     try {
       const t = await api.admin.addTable({
@@ -556,8 +635,7 @@
         minCapacity:     parseInt(document.getElementById('t-min').value),
         maxCapacity:     parseInt(document.getElementById('t-max').value),
         type:            document.getElementById('t-type').value,
-        isAccessible:    false,
-        isAvailable:     true,
+        isAccessible:    false, isAvailable: true,
         specialFeatures: document.getElementById('t-feat').value || null,
       });
       allTables.push(t); renderTables(); e.target.reset();
@@ -571,7 +649,7 @@
       const updated = await api.admin.toggleTable(id, !current);
       const idx = allTables.findIndex(t => t.id === id);
       if (idx !== -1) allTables[idx] = updated;
-      renderTables(); showToast('Table availability updated.', 'success');
+      renderTables(); showToast('Table updated.', 'success');
     } catch(err) { showToast(err.message, 'error'); }
   }
 
