@@ -1,233 +1,659 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CafeBook — Cafe Seat Booking System</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Segoe UI', Arial, sans-serif; background: #fdf8f2; color: #222; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CafeBook — Reserve Your Perfect Table</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    /* NAV */
-    nav { background: #3d2b1f; padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; }
-    nav .logo { color: #f5ede0; font-size: 1.3rem; font-weight: 700; text-decoration: none; }
-    nav a.btn { background: #c8a96e; color: #3d2b1f; padding: 0.45rem 1.1rem; border-radius: 6px;
-                font-size: 0.88rem; font-weight: 700; text-decoration: none; }
-    nav a.btn:hover { background: #b8945a; }
+        :root {
+            --primary: #8B4513;
+            --dark: #1a1a1a;
+            --cream: #f5f1ed;
+            --accent: #d4a574;
+            --gold: #b8860b;
+        }
 
-    /* HERO */
-    .hero { background: linear-gradient(135deg, #3d2b1f 0%, #6b4c2a 100%);
-            color: #f5ede0; text-align: center; padding: 80px 20px 70px; }
-    .hero .badge { display: inline-block; background: rgba(200,169,110,0.25); color: #c8a96e;
-                   border: 1px solid #c8a96e; border-radius: 20px; font-size: 0.8rem;
-                   padding: 4px 14px; margin-bottom: 20px; letter-spacing: 1px; }
-    .hero h1 { font-size: 2.8rem; margin-bottom: 16px; line-height: 1.2; }
-    .hero h1 span { color: #c8a96e; }
-    .hero p { font-size: 1.1rem; color: #d4c4b0; max-width: 560px; margin: 0 auto 32px; line-height: 1.7; }
-    .hero-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
-    .hero-btns a { padding: 0.75rem 1.8rem; border-radius: 8px; font-weight: 700;
-                   font-size: 0.95rem; text-decoration: none; }
-    .btn-primary   { background: #c8a96e; color: #3d2b1f; }
-    .btn-secondary { background: transparent; color: #f5ede0; border: 2px solid #c8a96e; }
-    .btn-primary:hover   { background: #b8945a; }
-    .btn-secondary:hover { background: rgba(200,169,110,0.1); }
+        html {
+            scroll-behavior: smooth;
+        }
 
-    /* SECTIONS */
-    section { padding: 60px 20px; max-width: 1000px; margin: 0 auto; }
-    section h2 { font-size: 1.7rem; color: #3d2b1f; text-align: center; margin-bottom: 10px; }
-    .section-sub { text-align: center; color: #888; font-size: 0.95rem; margin-bottom: 40px; }
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: var(--dark);
+            color: #333;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
 
-    /* FEATURES GRID */
-    .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
-    .feature-card { background: #fff; border: 1px solid #e8dece; border-radius: 10px;
-                    padding: 22px 20px; text-align: center; }
-    .feature-card .icon { font-size: 2rem; margin-bottom: 12px; }
-    .feature-card h3 { font-size: 0.95rem; color: #3d2b1f; margin-bottom: 8px; font-weight: 700; }
-    .feature-card p  { font-size: 0.84rem; color: #666; line-height: 1.55; }
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            background: rgba(26, 26, 26, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            border-bottom: 1px solid rgba(212, 165, 116, 0.2);
+        }
 
-    /* HOW IT WORKS */
-    .how-wrap { background: #fff; border-radius: 12px; padding: 40px; border: 1px solid #e8dece; }
-    .steps-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px; }
-    .step { text-align: center; }
-    .step .num { width: 40px; height: 40px; border-radius: 50%; background: #6b4c2a; color: #fff;
-                 font-size: 1rem; font-weight: 700; display: flex; align-items: center;
-                 justify-content: center; margin: 0 auto 10px; }
-    .step h4 { font-size: 0.88rem; color: #3d2b1f; margin-bottom: 5px; font-weight: 700; }
-    .step p  { font-size: 0.81rem; color: #777; line-height: 1.5; }
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--accent);
+            letter-spacing: -0.5px;
+        }
 
-    /* ZONES */
-    .zones-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; }
-    .zone-card  { background: #fff; border: 1px solid #e8dece; border-radius: 8px;
-                  padding: 16px; text-align: center; }
-    .zone-card .zi { font-size: 1.6rem; margin-bottom: 6px; }
-    .zone-card h4  { font-size: 0.85rem; color: #3d2b1f; font-weight: 700; margin-bottom: 4px; }
-    .zone-card p   { font-size: 0.78rem; color: #888; }
+        nav a {
+            color: #ccc;
+            text-decoration: none;
+            margin-left: 40px;
+            font-size: 14px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: color 0.3s ease;
+        }
 
-    /* TECH STACK */
-    .stack-row { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
-    .tag { display: inline-block; padding: 6px 16px; border-radius: 20px; font-size: 0.82rem;
-           font-weight: 600; }
-    .tag.back  { background: #e8f5e9; color: #2e7d32; }
-    .tag.front { background: #e3f2fd; color: #1565c0; }
-    .tag.infra { background: #fff3e0; color: #e65100; }
+        nav a:hover {
+            color: var(--accent);
+        }
 
-    /* FOOTER */
-    footer { background: #3d2b1f; color: #c4a882; text-align: center;
-             padding: 30px 20px; font-size: 0.85rem; }
-    footer a { color: #c8a96e; text-decoration: none; }
-    footer a:hover { text-decoration: underline; }
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 50%, #0d0d0d 100%);
+            position: relative;
+            overflow: hidden;
+            margin-top: 60px;
+        }
 
-    .divider { border: none; border-top: 1px solid #e8dece; margin: 0; }
-  </style>
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(212, 165, 116, 0.08) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(139, 69, 19, 0.05) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: float 25s ease-in-out infinite reverse;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(30px); }
+        }
+
+        .hero-content {
+            text-align: center;
+            z-index: 10;
+            max-width: 900px;
+            padding: 40px;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero-tag {
+            font-size: 12px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 80px;
+            font-weight: 700;
+            line-height: 1.1;
+            color: #fff;
+            margin-bottom: 20px;
+            letter-spacing: -2px;
+        }
+
+        .hero h1 em {
+            font-style: italic;
+            color: var(--accent);
+        }
+
+        .hero-subtitle {
+            font-size: 18px;
+            color: #bbb;
+            margin-bottom: 40px;
+            font-weight: 300;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.8;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 16px 50px;
+            border: 2px solid var(--accent);
+            color: #fff;
+            text-decoration: none;
+            text-transform: uppercase;
+            font-weight: 600;
+            font-size: 13px;
+            letter-spacing: 2px;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--accent);
+            transition: left 0.4s ease;
+            z-index: -1;
+        }
+
+        .cta-button:hover::before {
+            left: 0;
+        }
+
+        .cta-button:hover {
+            color: var(--dark);
+        }
+
+        /* Features Section */
+        .features {
+            padding: 120px 40px;
+            background: var(--cream);
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 56px;
+            color: var(--primary);
+            margin-bottom: 80px;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 60px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: #fff;
+            padding: 50px 40px;
+            text-align: center;
+            transition: all 0.4s ease;
+            box-shadow: 0 10px 40px rgba(139, 69, 19, 0.1);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(139, 69, 19, 0.2);
+        }
+
+        .feature-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        .feature-card h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 24px;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .feature-card p {
+            color: #666;
+            font-size: 15px;
+            line-height: 1.8;
+        }
+
+        /* How It Works */
+        .how-it-works {
+            padding: 120px 40px;
+            background: var(--dark);
+            color: #fff;
+        }
+
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .step {
+            position: relative;
+            padding: 40px;
+            background: rgba(212, 165, 116, 0.05);
+            border: 1px solid rgba(212, 165, 116, 0.2);
+            border-radius: 8px;
+            transition: all 0.4s ease;
+        }
+
+        .step:hover {
+            background: rgba(212, 165, 116, 0.1);
+            border-color: var(--accent);
+        }
+
+        .step-number {
+            font-family: 'Playfair Display', serif;
+            font-size: 48px;
+            color: var(--accent);
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .step h4 {
+            font-size: 18px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .step p {
+            color: #aaa;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        /* Tech Stack */
+        .tech-stack {
+            padding: 120px 40px;
+            background: var(--cream);
+        }
+
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .tech-item {
+            background: #fff;
+            padding: 40px;
+            border-left: 4px solid var(--primary);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .tech-item h4 {
+            color: var(--primary);
+            font-size: 16px;
+            margin-bottom: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 1px;
+        }
+
+        .tech-item p {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        /* Admin Preview */
+        .admin-preview {
+            padding: 120px 40px;
+            background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+            color: #fff;
+            text-align: center;
+        }
+
+        .admin-credentials {
+            background: rgba(212, 165, 116, 0.1);
+            border: 2px solid var(--accent);
+            border-radius: 8px;
+            padding: 40px;
+            max-width: 600px;
+            margin: 40px auto;
+            font-family: 'Courier New', monospace;
+        }
+
+        .admin-credentials p {
+            margin: 15px 0;
+            font-size: 16px;
+        }
+
+        .admin-credentials strong {
+            color: var(--accent);
+        }
+
+        /* Footer */
+        footer {
+            background: #0d0d0d;
+            color: #999;
+            padding: 60px 40px;
+            text-align: center;
+            border-top: 1px solid rgba(212, 165, 116, 0.2);
+        }
+
+        .footer-links {
+            margin-bottom: 30px;
+        }
+
+        .footer-links a {
+            color: var(--accent);
+            text-decoration: none;
+            margin: 0 20px;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: #fff;
+        }
+
+        .footer-bottom {
+            font-size: 14px;
+            color: #666;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav {
+                padding: 15px 20px;
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            nav a {
+                margin-left: 0;
+                font-size: 12px;
+            }
+
+            .hero {
+                margin-top: 80px;
+            }
+
+            .hero h1 {
+                font-size: 48px;
+            }
+
+            .hero-subtitle {
+                font-size: 16px;
+            }
+
+            .section-title {
+                font-size: 40px;
+                margin-bottom: 50px;
+            }
+
+            .features,
+            .how-it-works,
+            .tech-stack,
+            .admin-preview {
+                padding: 60px 20px;
+            }
+
+            .features-grid,
+            .steps,
+            .tech-grid {
+                gap: 30px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 36px;
+            }
+
+            .cta-button {
+                padding: 14px 30px;
+                font-size: 11px;
+            }
+
+            .section-title {
+                font-size: 32px;
+            }
+        }
+    </style>
 </head>
 <body>
+    <!-- Navigation -->
+    <nav>
+        <div class="logo">☕ CafeBook</div>
+        <div style="display: flex; gap: 30px;">
+            <a href="#features">Features</a>
+            <a href="#how">How It Works</a>
+            <a href="#tech">Technology</a>
+            <a href="https://github.com/athikahamed4345/cafe-seat-booking" target="_blank">GitHub</a>
+        </div>
+    </nav>
 
-<!-- NAV -->
-<nav>
-  <a href="#" class="logo">&#9749; CafeBook</a>
-  <a href="https://github.com/athikahamed4345/cafe-seat-booking" class="btn" target="_blank">View on GitHub</a>
-</nav>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-tag">Cafe Reservations System</div>
+            <h1>Reserve Your <em>Perfect</em> Table</h1>
+            <p class="hero-subtitle">
+                Choose your favorite spot — window-side, cosy corner, outdoor patio, or private nook. 
+                Book in seconds and arrive to a table waiting just for you.
+            </p>
+            <a href="https://github.com/athikahamed4345/cafe-seat-booking" class="cta-button">View on GitHub</a>
+        </div>
+    </section>
 
-<!-- HERO -->
-<div class="hero">
-  <div class="badge">OPEN SOURCE PROJECT</div>
-  <h1>Cafe Seat Booking<br><span>Made Simple</span></h1>
-  <p>A full-stack reservation system built for cafes. Customers choose their zone, book instantly, and receive email confirmation — all without a phone call.</p>
-  <div class="hero-btns">
-    <a href="https://github.com/athikahamed4345/cafe-seat-booking" class="btn-primary" target="_blank">⭐ Star on GitHub</a>
-    <a href="https://github.com/athikahamed4345/cafe-seat-booking#readme" class="btn-secondary" target="_blank">Read the Docs</a>
-  </div>
-</div>
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <h2 class="section-title">Features</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">👥</div>
+                <h3>For Customers</h3>
+                <p>Register securely, browse available seats by zone and time, book instantly, and manage all your reservations from one dashboard.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">⚙️</div>
+                <h3>For Admins</h3>
+                <p>View all bookings, manage reservations, control table availability, and track live statistics in a powerful admin dashboard.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔒</div>
+                <h3>Secure & Compliant</h3>
+                <p>JWT authentication, BCrypt encryption, GDPR compliance, email verification, and role-based access control built in.</p>
+            </div>
+        </div>
+    </section>
 
-<!-- FEATURES -->
-<section>
-  <h2>Everything a Cafe Needs</h2>
-  <p class="section-sub">Built for both customers and cafe owners — no third-party platform required.</p>
-  <div class="features">
-    <div class="feature-card">
-      <div class="icon">📅</div>
-      <h3>Instant Reservations</h3>
-      <p>Customers pick a date, time, party size, and confirm — no phone calls, no waiting.</p>
-    </div>
-    <div class="feature-card">
-      <div class="icon">🗂</div>
-      <h3>Zone-Based Seating</h3>
-      <p>Choose from Window Side, Patio, Lounge, Private Nook, and more — unique to CafeBook.</p>
-    </div>
-    <div class="feature-card">
-      <div class="icon">📧</div>
-      <h3>Automatic Emails</h3>
-      <p>Confirmation, status updates, and password reset emails sent automatically.</p>
-    </div>
-    <div class="feature-card">
-      <div class="icon">🛠</div>
-      <h3>Admin Dashboard</h3>
-      <p>View all bookings, update statuses, manage tables, enable or disable seats live.</p>
-    </div>
-    <div class="feature-card">
-      <div class="icon">🔒</div>
-      <h3>Secure Accounts</h3>
-      <p>JWT authentication, email verification, password reset, and GDPR-compliant data deletion.</p>
-    </div>
-    <div class="feature-card">
-      <div class="icon">📱</div>
-      <h3>Works on Any Device</h3>
-      <p>Responsive design — looks great on phones, tablets, and desktops without any extra setup.</p>
-    </div>
-  </div>
-</section>
+    <!-- How It Works -->
+    <section class="how-it-works" id="how">
+        <h2 class="section-title" style="color: var(--accent);">How It Works</h2>
+        <div class="steps">
+            <div class="step">
+                <div class="step-number">1</div>
+                <h4>Search</h4>
+                <p>Select your preferred date, time, and party size to see available seating.</p>
+            </div>
+            <div class="step">
+                <div class="step-number">2</div>
+                <h4>Choose Zone</h4>
+                <p>Pick from 6 unique seating zones that match your mood and preferences.</p>
+            </div>
+            <div class="step">
+                <div class="step-number">3</div>
+                <h4>Confirm</h4>
+                <p>Instant confirmation and email receipt with your booking reference.</p>
+            </div>
+            <div class="step">
+                <div class="step-number">4</div>
+                <h4>Enjoy</h4>
+                <p>Arrive at your reserved table. Admin confirms your status automatically.</p>
+            </div>
+        </div>
+    </section>
 
-<hr class="divider">
+    <!-- Seating Zones -->
+    <section class="features">
+        <h2 class="section-title">Seating Zones</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🪟</div>
+                <h3>Window Side</h3>
+                <p>Scenic views with natural light. Perfect for solo visits and couples.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">☕</div>
+                <h3>Cosy Corner</h3>
+                <p>Quiet, intimate setting. Ideal for quiet work and catch-ups.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🌿</div>
+                <h3>Outdoor Patio</h3>
+                <p>Fresh air open seating. Wheelchair accessible. Great for groups.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🎭</div>
+                <h3>Private Nook</h3>
+                <p>Semi-private booth seating. Perfect for meetings and private talks.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🎪</div>
+                <h3>Main Floor</h3>
+                <p>Central, lively atmosphere. Accessible seating available.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🛋️</div>
+                <h3>Lounge</h3>
+                <p>Relaxed low-seating area. Perfect for groups and longer stays.</p>
+            </div>
+        </div>
+    </section>
 
-<!-- HOW IT WORKS -->
-<section>
-  <h2>How It Works</h2>
-  <p class="section-sub">From sign-up to a confirmed seat in under a minute.</p>
-  <div class="how-wrap">
-    <div class="steps-row">
-      <div class="step">
-        <div class="num">1</div>
-        <h4>Create Account</h4>
-        <p>Sign up and verify your email address with one click.</p>
-      </div>
-      <div class="step">
-        <div class="num">2</div>
-        <h4>Pick Date & Time</h4>
-        <p>Choose when you want to visit and how many guests.</p>
-      </div>
-      <div class="step">
-        <div class="num">3</div>
-        <h4>Choose Your Zone</h4>
-        <p>Browse available tables by seating zone and capacity.</p>
-      </div>
-      <div class="step">
-        <div class="num">4</div>
-        <h4>Confirm Booking</h4>
-        <p>Add special notes and confirm your reservation.</p>
-      </div>
-      <div class="step">
-        <div class="num">5</div>
-        <h4>Get Email</h4>
-        <p>Receive instant confirmation with your booking reference.</p>
-      </div>
-      <div class="step">
-        <div class="num">6</div>
-        <h4>Enjoy Your Visit</h4>
-        <p>Your seat is ready and waiting when you arrive.</p>
-      </div>
-    </div>
-  </div>
-</section>
+    <!-- Tech Stack -->
+    <section class="tech-stack" id="tech">
+        <h2 class="section-title">Technology Stack</h2>
+        <div class="tech-grid">
+            <div class="tech-item">
+                <h4>Backend</h4>
+                <p>Java 21, Spring Boot 3.2, Spring Security, Spring Data JPA with comprehensive REST APIs.</p>
+            </div>
+            <div class="tech-item">
+                <h4>Frontend</h4>
+                <p>HTML5, CSS3, Vanilla JavaScript with Fetch API. Responsive design with no frameworks needed.</p>
+            </div>
+            <div class="tech-item">
+                <h4>Database</h4>
+                <p>H2 for local development, PostgreSQL for production deployment on Railway or Render.</p>
+            </div>
+            <div class="tech-item">
+                <h4>Authentication</h4>
+                <p>JWT tokens with 24-hour expiry, BCrypt password hashing, role-based access control.</p>
+            </div>
+            <div class="tech-item">
+                <h4>Email System</h4>
+                <p>Automated emails for verification, booking confirmations, status updates via Gmail or SendGrid.</p>
+            </div>
+            <div class="tech-item">
+                <h4>Testing</h4>
+                <p>15 JUnit 5 tests with Mockito covering booking and authentication services.</p>
+            </div>
+        </div>
+    </section>
 
-<hr class="divider">
+    <!-- Admin Preview -->
+    <section class="admin-preview">
+        <h2 class="section-title" style="color: var(--accent);">Ready to Try?</h2>
+        <p style="font-size: 18px; margin: 20px 0 40px; color: #bbb;">Run locally or explore the code on GitHub</p>
+        
+        <h3 style="color: #fff; margin-bottom: 20px;">Admin Login Credentials</h3>
+        <div class="admin-credentials">
+            <p><strong>Email:</strong> admin@cafe.com</p>
+            <p><strong>Password:</strong> admin123</p>
+        </div>
 
-<!-- SEATING ZONES -->
-<section>
-  <h2>6 Seating Zones</h2>
-  <p class="section-sub">Every customer gets the experience they came for.</p>
-  <div class="zones-grid">
-    <div class="zone-card"><div class="zi">🪟</div><h4>Window Side</h4><p>Scenic views, 1–4 guests</p></div>
-    <div class="zone-card"><div class="zi">🛋</div><h4>Cosy Corner</h4><p>Quiet & intimate, 1–2 guests</p></div>
-    <div class="zone-card"><div class="zi">🌿</div><h4>Outdoor Patio</h4><p>Fresh air, 2–6 guests</p></div>
-    <div class="zone-card"><div class="zi">🔒</div><h4>Private Nook</h4><p>Meetings, 2–6 guests</p></div>
-    <div class="zone-card"><div class="zi">☕</div><h4>Main Floor</h4><p>Everyday visits, 1–4 guests</p></div>
-    <div class="zone-card"><div class="zi">🎵</div><h4>Lounge</h4><p>Groups & longer stays, 2–8 guests</p></div>
-  </div>
-</section>
+        <p style="color: #aaa; margin-top: 30px; font-size: 14px;">
+            📝 First-time users: Register with any email (email verification can be skipped in development mode)
+        </p>
+    </section>
 
-<hr class="divider">
+    <!-- Footer -->
+    <footer>
+        <div class="footer-links">
+            <a href="https://github.com/athikahamed4345/cafe-seat-booking" target="_blank">GitHub Repository</a>
+            <a href="#" target="_blank">View Code</a>
+            <a href="mailto:contact@example.com">Contact</a>
+        </div>
+        <div class="footer-bottom">
+            <p>☕ CafeBook © 2026 | Cafe Seat Booking & Reservation Management System</p>
+            <p>Built with Java • Spring Boot • React Thinking • Love for Details</p>
+        </div>
+    </footer>
 
-<!-- TECH STACK -->
-<section>
-  <h2>Technology Stack</h2>
-  <p class="section-sub">Modern, production-ready, and cloud deployable.</p>
-  <div class="stack-row">
-    <span class="tag back">Java 21</span>
-    <span class="tag back">Spring Boot 3.2</span>
-    <span class="tag back">Spring Security</span>
-    <span class="tag back">JWT Auth</span>
-    <span class="tag back">Spring Data JPA</span>
-    <span class="tag back">JavaMailSender</span>
-    <span class="tag front">HTML5</span>
-    <span class="tag front">CSS3</span>
-    <span class="tag front">Vanilla JavaScript</span>
-    <span class="tag front">Fetch API</span>
-    <span class="tag infra">H2 Database</span>
-    <span class="tag infra">PostgreSQL Ready</span>
-    <span class="tag infra">Maven</span>
-    <span class="tag infra">JUnit 5 + Mockito</span>
-  </div>
-</section>
+    <script>
+        // Smooth scroll for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
 
-<!-- FOOTER -->
-<footer>
-  <p>&#9749; <strong>CafeBook</strong> — Open source cafe seat booking system</p>
-  <p style="margin-top:8px">
-    <a href="https://github.com/athikahamed4345/cafe-seat-booking" target="_blank">GitHub Repository</a>
-    &nbsp;·&nbsp;
-    <a href="https://github.com/athikahamed4345/cafe-seat-booking#readme" target="_blank">Documentation</a>
-  </p>
-</footer>
+        // Navbar background on scroll
+        window.addEventListener('scroll', function() {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 50) {
+                nav.style.background = 'rgba(26, 26, 26, 0.99)';
+                nav.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.3)';
+            } else {
+                nav.style.background = 'rgba(26, 26, 26, 0.95)';
+                nav.style.boxShadow = 'none';
+            }
+        });
 
-</body>
-</html>
+        // Intersection Observer for fade-in animations
+        const observerOptions = {
+            threshold:
