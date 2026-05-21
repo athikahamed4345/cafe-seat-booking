@@ -5,6 +5,283 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>My Reservations — CafeBook</title>
   <link rel="stylesheet" href="/css/style.css">
+  <style>
+    body { background: #f5f0ea; }
+
+    /* ══════════════════════════════════════════════
+       HERO BANNER
+    ══════════════════════════════════════════════ */
+    .dash-hero {
+      background: linear-gradient(135deg, #1c0e00 0%, #3d1f00 40%, #6b3a10 70%, #c9820a 100%);
+      padding: 3rem 2rem 4.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .dash-hero::before {
+      content: '';
+      position: absolute; top: -60px; right: -60px;
+      width: 320px; height: 320px; border-radius: 50%;
+      background: rgba(201,169,110,0.12);
+    }
+    .dash-hero::after {
+      content: '';
+      position: absolute; bottom: -80px; left: 10%;
+      width: 240px; height: 240px; border-radius: 50%;
+      background: rgba(255,255,255,0.05);
+    }
+    .dash-hero-inner {
+      max-width: 1100px; margin: 0 auto;
+      position: relative; z-index: 2;
+    }
+    .hero-greeting {
+      font-size: 0.78rem; color: rgba(201,169,110,0.85);
+      letter-spacing: 0.2em; text-transform: uppercase;
+      font-weight: 600; margin-bottom: 8px;
+    }
+    .hero-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.4rem; font-weight: 700; color: #fff;
+      margin-bottom: 6px; line-height: 1.1;
+    }
+    .hero-sub { font-size: 0.9rem; color: rgba(255,255,255,0.6); margin-bottom: 2rem; }
+
+    .hero-stats {
+      display: flex; gap: 1rem; flex-wrap: wrap;
+    }
+    .hero-stat {
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 12px; padding: 0.85rem 1.3rem;
+      min-width: 110px; text-align: center;
+    }
+    .hero-stat .hs-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.7rem; font-weight: 700; color: #fff; line-height: 1;
+    }
+    .hero-stat .hs-lbl {
+      font-size: 0.68rem; color: rgba(255,255,255,0.6);
+      text-transform: uppercase; letter-spacing: 0.08em; margin-top: 3px;
+    }
+
+    /* ══════════════════════════════════════════════
+       ACTION BAR (floats up from hero)
+    ══════════════════════════════════════════════ */
+    .action-bar {
+      max-width: 1100px; margin: -1.8rem auto 0;
+      padding: 0 2rem;
+      position: relative; z-index: 10;
+    }
+    .action-inner {
+      background: #fff;
+      border-radius: 16px;
+      padding: 1.1rem 1.4rem;
+      display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+      border: 1px solid rgba(201,169,110,0.2);
+    }
+    .action-inner .btn-new {
+      background: linear-gradient(135deg, #c9820a, #8b4513);
+      color: #fff; border: none; border-radius: 10px;
+      padding: 0.65rem 1.4rem; font-size: 0.84rem; font-weight: 700;
+      cursor: pointer; text-decoration: none;
+      font-family: 'Montserrat', sans-serif;
+      box-shadow: 0 4px 12px rgba(139,69,19,0.35);
+      transition: all 0.2s; letter-spacing: 0.03em;
+      display: inline-flex; align-items: center; gap: 0.4rem;
+    }
+    .action-inner .btn-new:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(139,69,19,0.45); }
+    .action-inner .btn-ghost {
+      background: transparent; border: 1.5px solid #e0d5c5;
+      color: #7a5c3a; border-radius: 10px;
+      padding: 0.6rem 1.2rem; font-size: 0.8rem; font-weight: 600;
+      cursor: pointer; font-family: 'Montserrat', sans-serif;
+      transition: all 0.2s;
+    }
+    .action-inner .btn-ghost:hover { border-color: #c9820a; color: #c9820a; background: #fff8ed; }
+    .action-inner .btn-danger-ghost {
+      background: transparent; border: 1.5px solid #f5c0c0;
+      color: #c0392b; border-radius: 10px;
+      padding: 0.6rem 1.2rem; font-size: 0.8rem; font-weight: 600;
+      cursor: pointer; font-family: 'Montserrat', sans-serif;
+      transition: all 0.2s; margin-left: auto;
+    }
+    .action-inner .btn-danger-ghost:hover { background: #fce4ec; border-color: #c0392b; }
+
+    /* ══════════════════════════════════════════════
+       MAIN CONTENT
+    ══════════════════════════════════════════════ */
+    .dash-body {
+      max-width: 1100px; margin: 0 auto;
+      padding: 2rem 2rem 3rem;
+    }
+
+    /* Change password panel */
+    .pw-panel {
+      display: none;
+      background: #fff;
+      border-radius: 14px;
+      border: 1px solid #e8dece;
+      padding: 1.4rem 1.6rem;
+      margin-bottom: 1.6rem;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+    }
+    .pw-panel h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem; color: #1c0e00; margin-bottom: 1rem;
+      display: flex; align-items: center; gap: 0.4rem;
+    }
+    .pw-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr auto;
+      gap: 0.8rem; align-items: end;
+    }
+    .pw-grid .fg label { font-size: 0.7rem; color: #aaa; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; display: block; margin-bottom: 5px; }
+    .pw-grid .fg input { width: 100%; border: 1.5px solid #e0d5c5; border-radius: 8px; padding: 0.55rem 0.85rem; font-size: 0.84rem; font-family: 'Montserrat', sans-serif; }
+    .pw-grid .fg input:focus { border-color: #c9820a; outline: none; }
+    #pw-alert { margin-top: 0.6rem; font-size: 0.82rem; }
+
+    /* Section heading */
+    .section-label {
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.15em;
+      text-transform: uppercase; color: #aaa;
+      margin-bottom: 1rem; display: flex; align-items: center; gap: 0.6rem;
+    }
+    .section-label::after { content: ''; flex: 1; height: 1px; background: #e8dece; }
+
+    /* ══════════════════════════════════════════════
+       BOOKING CARDS
+    ══════════════════════════════════════════════ */
+    .bookings-grid { display: flex; flex-direction: column; gap: 1rem; }
+
+    .bk-card {
+      background: #fff;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.07);
+      border: 1px solid rgba(0,0,0,0.06);
+      display: flex;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .bk-card:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,0,0,0.11); }
+
+    /* Left accent strip — changes per zone/status */
+    .bk-strip {
+      width: 7px; flex-shrink: 0;
+    }
+    .bk-strip.zone-window   { background: linear-gradient(180deg, #2196f3, #1565c0); }
+    .bk-strip.zone-cosy     { background: linear-gradient(180deg, #9c27b0, #6a1b9a); }
+    .bk-strip.zone-patio    { background: linear-gradient(180deg, #4caf50, #2e7d32); }
+    .bk-strip.zone-nook     { background: linear-gradient(180deg, #673ab7, #4527a0); }
+    .bk-strip.zone-main     { background: linear-gradient(180deg, #ff9800, #e65100); }
+    .bk-strip.zone-lounge   { background: linear-gradient(180deg, #e91e63, #880e4f); }
+    .bk-strip.zone-default  { background: linear-gradient(180deg, #c9820a, #8b4513); }
+
+    .bk-body { flex: 1; padding: 1.2rem 1.5rem; min-width: 0; }
+    .bk-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 10px; flex-wrap: wrap; gap: 0.5rem; }
+    .bk-seat {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem; font-weight: 700; color: #1c0e00;
+    }
+    .bk-zone-tag {
+      font-size: 0.72rem; font-weight: 600;
+      padding: 3px 10px; border-radius: 20px;
+      margin-left: 8px;
+    }
+    .bk-zone-tag.zone-window { background: #e3f2fd; color: #1565c0; }
+    .bk-zone-tag.zone-cosy   { background: #f3e5f5; color: #6a1b9a; }
+    .bk-zone-tag.zone-patio  { background: #e8f5e9; color: #2e7d32; }
+    .bk-zone-tag.zone-nook   { background: #ede7f6; color: #4527a0; }
+    .bk-zone-tag.zone-main   { background: #fff3e0; color: #e65100; }
+    .bk-zone-tag.zone-lounge { background: #fce4ec; color: #880e4f; }
+    .bk-zone-tag.zone-default{ background: #fff8ed; color: #8b4513; }
+
+    .bk-ref { font-size: 0.67rem; color: #ccc; background: #f8f4ef; border: 1px solid #ede5d8; padding: 2px 9px; border-radius: 10px; margin-left: 6px; }
+
+    /* Status pill */
+    .bk-status {
+      font-size: 0.69rem; font-weight: 800; padding: 4px 12px; border-radius: 20px;
+      letter-spacing: 0.06em; text-transform: uppercase; flex-shrink: 0;
+      display: inline-flex; align-items: center; gap: 5px;
+    }
+    .bk-status::before { content: '●'; font-size: 0.5rem; }
+    .st-CONFIRMED { background: linear-gradient(135deg, #e8f5e9, #c8e6c9); color: #1b5e20; }
+    .st-PENDING   { background: linear-gradient(135deg, #fff8e1, #ffecb3); color: #7a4f00; }
+    .st-CANCELLED { background: linear-gradient(135deg, #fce4ec, #f8bbd0); color: #880e4f; }
+    .st-COMPLETED { background: linear-gradient(135deg, #e3f2fd, #bbdefb); color: #0d47a1; }
+    .st-NO_SHOW   { background: #f5f5f5; color: #757575; }
+
+    .bk-meta {
+      display: flex; gap: 1.4rem; flex-wrap: wrap;
+      font-size: 0.82rem; color: #888;
+    }
+    .bk-meta span { display: flex; align-items: center; gap: 5px; }
+
+    .bk-notes {
+      margin-top: 8px; font-size: 0.8rem; color: #aaa;
+      font-style: italic; padding-left: 4px;
+      border-left: 3px solid #f0e8da;
+    }
+
+    .bk-actions { margin-top: 12px; }
+    .btn-cancel-bk {
+      background: transparent; border: 1.5px solid #f5c0c0;
+      color: #c0392b; border-radius: 8px;
+      padding: 0.38rem 1rem; font-size: 0.76rem; font-weight: 600;
+      cursor: pointer; font-family: 'Montserrat', sans-serif;
+      transition: all 0.2s;
+    }
+    .btn-cancel-bk:hover { background: #c0392b; color: #fff; border-color: #c0392b; }
+
+    /* ══════════════════════════════════════════════
+       EMPTY STATE
+    ══════════════════════════════════════════════ */
+    .empty-dash {
+      text-align: center; padding: 4rem 2rem;
+      background: #fff; border-radius: 16px;
+      border: 2px dashed #e8dece;
+    }
+    .empty-dash .ed-icon { font-size: 3rem; margin-bottom: 1rem; }
+    .empty-dash h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem; color: #3d1f00; margin-bottom: 0.5rem;
+    }
+    .empty-dash p { font-size: 0.88rem; color: #aaa; margin-bottom: 1.5rem; }
+
+    /* ══════════════════════════════════════════════
+       DELETE MODAL
+    ══════════════════════════════════════════════ */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.55); z-index: 1000;
+      align-items: center; justify-content: center;
+      backdrop-filter: blur(3px);
+    }
+    .modal-box {
+      background: #fff; border-radius: 20px;
+      padding: 2.5rem 2rem; max-width: 400px; width: 90%;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+      animation: modalIn 0.25s ease-out;
+    }
+    @keyframes modalIn { from { opacity:0; transform:scale(0.92) translateY(10px); } to { opacity:1; transform:none; } }
+    .modal-icon { font-size: 2.5rem; margin-bottom: 0.8rem; }
+    .modal-box h3 { font-family: 'Playfair Display', serif; font-size: 1.25rem; color: #1c0e00; margin-bottom: 0.75rem; }
+    .modal-box p { font-size: 0.86rem; color: #888; line-height: 1.6; margin-bottom: 1.8rem; }
+    .modal-btns { display: flex; gap: 0.75rem; justify-content: center; }
+
+    /* ══════════════════════════════════════════════
+       RESPONSIVE
+    ══════════════════════════════════════════════ */
+    @media (max-width: 640px) {
+      .hero-name { font-size: 1.7rem; }
+      .dash-body { padding: 1.4rem 1rem 2rem; }
+      .action-bar { padding: 0 1rem; }
+      .pw-grid { grid-template-columns: 1fr 1fr; }
+      .pw-grid > div:last-child { grid-column: 1/-1; }
+      .bk-meta { gap: 0.8rem; }
+    }
+  </style>
 </head>
 <body>
   <nav class="navbar">
@@ -13,60 +290,61 @@
     <div id="main-nav"></div>
   </nav>
 
-  <div class="page-section">
-    <div class="page-title-bar fade-up">
-      <div>
-        <p class="page-subtitle">Your Account</p>
-        <h1 class="page-title">My Reservations</h1>
+  <!-- HERO -->
+  <div class="dash-hero">
+    <div class="dash-hero-inner">
+      <div class="hero-greeting">Welcome back</div>
+      <div class="hero-name" id="hero-name">Your Reservations</div>
+      <div class="hero-sub">Your seat is always waiting ☕</div>
+      <div class="hero-stats">
+        <div class="hero-stat"><div class="hs-num" id="hs-total">—</div><div class="hs-lbl">Total</div></div>
+        <div class="hero-stat"><div class="hs-num" id="hs-upcoming">—</div><div class="hs-lbl">Upcoming</div></div>
+        <div class="hero-stat"><div class="hs-num" id="hs-completed">—</div><div class="hs-lbl">Completed</div></div>
       </div>
-      <div style="display:flex;gap:0.75rem;flex-wrap:wrap">
-        <a href="/book.html" class="btn btn-primary">+ New Reservation</a>
-        <button class="btn btn-secondary" onclick="togglePasswordForm()" style="font-size:0.82rem">Change Password</button>
-        <button class="btn btn-danger"    onclick="openDeleteModal()"    style="font-size:0.82rem">Delete Account</button>
-      </div>
-    </div>
-
-    <!-- Change Password inline form -->
-    <div id="password-form-wrap" style="display:none" class="card fade-up" style="margin-bottom:1.5rem">
-      <h3 style="font-family:'Playfair Display',serif;font-size:1rem;margin-bottom:1rem">Change Password</h3>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:0.75rem;align-items:end;flex-wrap:wrap">
-        <div class="form-group" style="margin:0">
-          <label>Current Password</label>
-          <input type="password" id="pw-current" placeholder="••••••••">
-        </div>
-        <div class="form-group" style="margin:0">
-          <label>New Password</label>
-          <input type="password" id="pw-new" placeholder="Min. 6 characters">
-        </div>
-        <div class="form-group" style="margin:0">
-          <label>Confirm New Password</label>
-          <input type="password" id="pw-confirm" placeholder="••••••••">
-        </div>
-        <div class="form-group" style="margin:0">
-          <label>&nbsp;</label>
-          <button class="btn btn-primary" onclick="changePassword()" id="pw-btn">Update</button>
-        </div>
-      </div>
-      <div id="pw-alert" style="margin-top:0.75rem"></div>
-    </div>
-
-    <div id="alert-box"></div>
-    <div id="bookings-list" class="fade-up-d1">
-      <p class="text-muted" style="padding:1rem 0">Loading…</p>
     </div>
   </div>
 
-  <!-- Delete account confirmation modal -->
-  <div id="delete-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center">
-    <div style="background:#fff;border-radius:8px;padding:2rem;max-width:380px;width:90%;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,0.2)">
-      <p style="font-size:1.8rem;margin-bottom:0.5rem">&#9888;</p>
-      <h3 style="font-family:'Playfair Display',serif;margin-bottom:0.75rem">Delete Account?</h3>
-      <p style="font-size:0.88rem;color:#666;line-height:1.5;margin-bottom:1.5rem">
-        This will permanently delete your account and cancel all your reservations. This cannot be undone.
-      </p>
-      <div style="display:flex;gap:0.75rem;justify-content:center">
+  <!-- ACTION BAR -->
+  <div class="action-bar">
+    <div class="action-inner">
+      <a href="/book.html" class="btn-new">＋ &nbsp;New Reservation</a>
+      <button class="btn-ghost" onclick="togglePwPanel()">🔐 Change Password</button>
+      <button class="btn-danger-ghost" onclick="openDeleteModal()">🗑 Delete Account</button>
+    </div>
+  </div>
+
+  <!-- MAIN BODY -->
+  <div class="dash-body">
+
+    <!-- Password panel -->
+    <div class="pw-panel" id="pw-panel">
+      <h3>🔐 Change Password</h3>
+      <div class="pw-grid">
+        <div class="fg"><label>Current Password</label><input type="password" id="pw-current" placeholder="••••••••"></div>
+        <div class="fg"><label>New Password</label><input type="password" id="pw-new" placeholder="Min. 6 characters"></div>
+        <div class="fg"><label>Confirm New Password</label><input type="password" id="pw-confirm" placeholder="••••••••"></div>
+        <div class="fg"><label>&nbsp;</label><button class="btn btn-primary" onclick="changePassword()" id="pw-btn" style="width:100%;padding:0.58rem">Update</button></div>
+      </div>
+      <div id="pw-alert"></div>
+    </div>
+
+    <div id="alert-box"></div>
+
+    <div class="section-label">Your Reservations</div>
+    <div class="bookings-grid" id="bookings-list">
+      <div style="text-align:center;padding:2rem;color:#ccc;font-size:0.9rem">Loading…</div>
+    </div>
+  </div>
+
+  <!-- DELETE MODAL -->
+  <div class="modal-overlay" id="delete-modal">
+    <div class="modal-box">
+      <div class="modal-icon">⚠️</div>
+      <h3>Delete Your Account?</h3>
+      <p>This will permanently delete your account and cancel all your upcoming reservations. This action cannot be undone.</p>
+      <div class="modal-btns">
         <button class="btn btn-secondary" onclick="closeDeleteModal()">Cancel</button>
-        <button class="btn btn-danger" id="confirm-delete-btn" onclick="confirmDeleteAccount()">Yes, Delete My Account</button>
+        <button class="btn btn-danger" id="confirm-delete-btn" onclick="confirmDeleteAccount()">Yes, Delete</button>
       </div>
     </div>
   </div>
@@ -77,54 +355,74 @@
     if (!requireAuth()) throw new Error('redirect');
     renderNav(); renderFooter();
 
-    const STATUS_COLOR = {
-      CONFIRMED: '#2a6b3a', PENDING: '#7a5c00',
-      CANCELLED: '#8B1A1A', COMPLETED: '#1a3d8c', NO_SHOW: '#666'
-    };
+    const user = getUser();
+    if (user && user.name) {
+      document.getElementById('hero-name').textContent = user.name;
+    }
+
+    /* Zone → CSS class mapping */
+    function zoneClass(zoneName) {
+      if (!zoneName) return 'zone-default';
+      const n = zoneName.toLowerCase();
+      if (n.includes('window'))  return 'zone-window';
+      if (n.includes('cosy') || n.includes('corner')) return 'zone-cosy';
+      if (n.includes('patio') || n.includes('outdoor')) return 'zone-patio';
+      if (n.includes('nook') || n.includes('private')) return 'zone-nook';
+      if (n.includes('main') || n.includes('floor'))   return 'zone-main';
+      if (n.includes('lounge')) return 'zone-lounge';
+      return 'zone-default';
+    }
 
     async function loadBookings() {
       try {
         const bookings = await api.bookings.my();
         const el = document.getElementById('bookings-list');
+
+        // Stats
+        document.getElementById('hs-total').textContent     = bookings.length;
+        document.getElementById('hs-upcoming').textContent  = bookings.filter(b => b.status === 'CONFIRMED' || b.status === 'PENDING').length;
+        document.getElementById('hs-completed').textContent = bookings.filter(b => b.status === 'COMPLETED').length;
+
         if (bookings.length === 0) {
-          el.innerHTML = `<div class="empty-state">
-            <p>You have no reservations yet.</p>
-            <a href="/book.html" class="btn btn-primary">Make Your First Reservation</a>
-          </div>`;
+          el.innerHTML = `
+            <div class="empty-dash">
+              <div class="ed-icon">☕</div>
+              <h3>No Reservations Yet</h3>
+              <p>Your next great cafe moment is just one click away.</p>
+              <a href="/book.html" class="btn btn-primary">Make Your First Reservation</a>
+            </div>`;
           return;
         }
-        el.innerHTML = bookings.map(b => `
-          <div class="card" id="booking-${b.id}"
-               style="border-left:3px solid ${STATUS_COLOR[b.status] || '#e5ddd0'}">
-            <div class="booking-user">
-              <div>
-                <strong style="font-family:'Playfair Display',serif;font-size:1.05rem">
-                  Seat ${b.table ? b.table.tableNumber : '?'}
-                </strong>
-                ${b.table && b.table.zone
-                  ? `<span class="text-muted" style="margin-left:0.6rem">${b.table.zone.name}</span>`
-                  : ''}
-                <span style="margin-left:0.6rem;font-size:0.68rem;color:#bbb">${bookingRef(b.id)}</span>
+
+        el.innerHTML = bookings.map(b => {
+          const zoneName = b.table?.zone?.name || '';
+          const zClass   = zoneClass(zoneName);
+          const canCancel = b.status === 'CONFIRMED' || b.status === 'PENDING';
+          return `
+          <div class="bk-card">
+            <div class="bk-strip ${zClass}"></div>
+            <div class="bk-body">
+              <div class="bk-top">
+                <div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px">
+                  <span class="bk-seat">Seat ${b.table ? b.table.tableNumber : '?'}</span>
+                  ${zoneName ? `<span class="bk-zone-tag ${zClass}">${zoneName}</span>` : ''}
+                  <span class="bk-ref">${bookingRef(b.id)}</span>
+                </div>
+                <span class="bk-status st-${b.status}">${b.status}</span>
               </div>
-              ${statusBadge(b.status)}
+              <div class="bk-meta">
+                <span>📅 ${b.bookingDate}</span>
+                <span>🕐 ${formatTime12(b.bookingTime)}</span>
+                <span>👥 ${b.partySize} guest${b.partySize > 1 ? 's' : ''}</span>
+              </div>
+              ${b.specialNotes ? `<div class="bk-notes">"${b.specialNotes}"</div>` : ''}
+              ${canCancel ? `<div class="bk-actions"><button class="btn-cancel-bk" onclick="cancelBooking(${b.id})">Cancel Reservation</button></div>` : ''}
             </div>
-            <p class="booking-meta">
-              ${b.bookingDate} &nbsp;&bull;&nbsp;
-              ${formatTime12(b.bookingTime)} &nbsp;&bull;&nbsp;
-              ${b.partySize} guest${b.partySize > 1 ? 's' : ''}
-            </p>
-            ${b.specialNotes
-              ? `<p class="text-muted" style="margin-top:0.35rem;font-style:italic">&#8220;${b.specialNotes}&#8221;</p>`
-              : ''}
-            ${(b.status === 'CONFIRMED' || b.status === 'PENDING')
-              ? `<div style="margin-top:1rem">
-                   <button class="btn btn-danger" onclick="cancelBooking(${b.id})">Cancel Reservation</button>
-                 </div>`
-              : ''}
-          </div>`).join('');
+          </div>`;
+        }).join('');
       } catch(err) {
         document.getElementById('bookings-list').innerHTML =
-          `<div class="alert alert-error">${err.message}</div>`;
+          `<div class="empty-dash"><div class="ed-icon">⚠️</div><h3>Couldn't Load</h3><p>${err.message}</p></div>`;
       }
     }
 
@@ -137,38 +435,38 @@
       } catch(err) { showToast(err.message, 'error'); }
     }
 
-    // ── Change password ───────────────────────────────────────────────────────
-    function togglePasswordForm() {
-      const wrap = document.getElementById('password-form-wrap');
-      wrap.style.display = wrap.style.display === 'none' ? 'block' : 'none';
+    /* ── Change password ─────────────────────────────────── */
+    function togglePwPanel() {
+      const p = document.getElementById('pw-panel');
+      p.style.display = p.style.display === 'block' ? 'none' : 'block';
+      if (p.style.display === 'block') p.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
     async function changePassword() {
       const current = document.getElementById('pw-current').value;
       const newPw   = document.getElementById('pw-new').value;
       const confirm = document.getElementById('pw-confirm').value;
-      const alert   = document.getElementById('pw-alert');
+      const alertEl = document.getElementById('pw-alert');
       const btn     = document.getElementById('pw-btn');
 
-      alert.innerHTML = '';
-      if (!current) { alert.innerHTML = '<p style="color:#c0392b;font-size:0.85rem">Enter your current password.</p>'; return; }
-      if (newPw.length < 6) { alert.innerHTML = '<p style="color:#c0392b;font-size:0.85rem">New password must be at least 6 characters.</p>'; return; }
-      if (newPw !== confirm) { alert.innerHTML = '<p style="color:#c0392b;font-size:0.85rem">Passwords do not match.</p>'; return; }
+      alertEl.innerHTML = '';
+      if (!current) { alertEl.innerHTML = '<p style="color:#c0392b">Enter your current password.</p>'; return; }
+      if (newPw.length < 6) { alertEl.innerHTML = '<p style="color:#c0392b">New password must be at least 6 characters.</p>'; return; }
+      if (newPw !== confirm) { alertEl.innerHTML = '<p style="color:#c0392b">Passwords do not match.</p>'; return; }
 
       btn.disabled = true; btn.textContent = 'Updating…';
       try {
         await api.user.changePassword(current, newPw);
-        alert.innerHTML = '<p style="color:#27ae60;font-size:0.85rem">Password updated successfully.</p>';
+        alertEl.innerHTML = '<p style="color:#27ae60">✓ Password updated successfully.</p>';
         document.getElementById('pw-current').value = '';
-        document.getElementById('pw-new').value     = '';
+        document.getElementById('pw-new').value = '';
         document.getElementById('pw-confirm').value = '';
-      } catch(err) {
-        alert.innerHTML = `<p style="color:#c0392b;font-size:0.85rem">${err.message}</p>`;
-      }
+        showToast('Password updated.', 'success');
+      } catch(err) { alertEl.innerHTML = `<p style="color:#c0392b">${err.message}</p>`; }
       btn.disabled = false; btn.textContent = 'Update';
     }
 
-    // ── Delete account ────────────────────────────────────────────────────────
+    /* ── Delete account ──────────────────────────────────── */
     function openDeleteModal()  { document.getElementById('delete-modal').style.display = 'flex'; }
     function closeDeleteModal() { document.getElementById('delete-modal').style.display = 'none'; }
 
@@ -182,7 +480,7 @@
       } catch(err) {
         showToast(err.message, 'error');
         closeDeleteModal();
-        btn.disabled = false; btn.textContent = 'Yes, Delete My Account';
+        btn.disabled = false; btn.textContent = 'Yes, Delete';
       }
     }
 
