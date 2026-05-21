@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reserve a Table — CafeBook</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <a href="/index.html" class="logo">&#9749; CafeBook</a>
+    <button class="nav-toggle" aria-label="Menu">&#9776;</button>
+    <div id="main-nav"></div>
+  </nav>
+
+  <div class="res-hero">
+    <div class="res-hero-inner">
+      <span class="res-hero-label">Welcome to CafeBook</span>
+      <div class="res-hero-title">Reservations</div>
+      <div class="res-hero-line"></div>
+    </div>
+  </div>
+
+  <div class="res-section">
+    <div class="res-heading fade-up">
+      <h1><em>Dine</em> With Us</h1>
+      <p>Reserve your table in seconds</p>
+      <div class="res-heading-rule"></div>
+    </div>
+
+    <div id="alert-box"></div>
+
+    <form id="reservation-form" class="fade-up-d1" novalidate>
+      <div class="res-form-grid">
+        <div class="res-field">
+          <label>Full Name <span class="req">*</span></label>
+          <input type="text" id="f-name" required placeholder="Your full name">
+        </div>
+        <div class="res-field">
+          <label>Email Address</label>
+          <input type="email" id="f-email" placeholder="you@example.com">
+        </div>
+        <div class="res-field">
+          <label>Phone Number</label>
+          <input type="tel" id="f-phone" placeholder="+91 99999 00000">
+        </div>
+        <div class="res-field res-select-wrap">
+          <label>Number of Guests <span class="req">*</span></label>
+          <select id="f-guests" required>
+            <option value="" disabled selected>Select guests</option>
+            <option value="1">1 Guest</option><option value="2">2 Guests</option>
+            <option value="3">3 Guests</option><option value="4">4 Guests</option>
+            <option value="5">5 Guests</option><option value="6">6 Guests</option>
+            <option value="7">7 Guests</option><option value="8">8 Guests</option>
+            <option value="10">10 Guests</option><option value="12">12 Guests</option>
+            <option value="15">15 Guests</option><option value="20">20 Guests</option>
+          </select>
+        </div>
+        <div class="res-field res-select-wrap">
+          <label>Location / Zone</label>
+          <select id="f-zone">
+            <option value="any" selected>Any Available Zone</option>
+          </select>
+        </div>
+        <div class="res-field">
+          <label>Date of Reservation <span class="req">*</span></label>
+          <input type="date" id="f-date" required>
+        </div>
+        <div class="res-field res-select-wrap">
+          <label>Preferred Time <span class="req">*</span></label>
+          <select id="f-time" required>
+            <option value="" disabled selected>Select time</option>
+            <option value="08:00">8:00 AM</option><option value="08:30">8:30 AM</option>
+            <option value="09:00">9:00 AM</option><option value="09:30">9:30 AM</option>
+            <option value="10:00">10:00 AM</option><option value="10:30">10:30 AM</option>
+            <option value="11:00">11:00 AM</option><option value="11:30">11:30 AM</option>
+            <option value="12:00">12:00 PM</option><option value="12:30">12:30 PM</option>
+            <option value="13:00">1:00 PM</option><option value="13:30">1:30 PM</option>
+            <option value="14:00">2:00 PM</option><option value="14:30">2:30 PM</option>
+            <option value="15:00">3:00 PM</option><option value="15:30">3:30 PM</option>
+            <option value="16:00">4:00 PM</option><option value="16:30">4:30 PM</option>
+            <option value="17:00">5:00 PM</option><option value="17:30">5:30 PM</option>
+            <option value="18:00">6:00 PM</option><option value="18:30">6:30 PM</option>
+            <option value="19:00">7:00 PM</option><option value="19:30">7:30 PM</option>
+            <option value="20:00">8:00 PM</option><option value="20:30">8:30 PM</option>
+            <option value="21:00">9:00 PM</option><option value="21:30">9:30 PM</option>
+            <option value="22:00">10:00 PM</option>
+          </select>
+        </div>
+        <div class="res-field res-select-wrap">
+          <label>How Did You Hear About Us?</label>
+          <select id="f-source">
+            <option value="">Select source</option>
+            <option>Instagram</option><option>Facebook</option><option>Google</option>
+            <option>Friend Referral</option><option>Walk-in</option><option>Other</option>
+          </select>
+        </div>
+        <div class="res-field full-width">
+          <label>Special Requests or Dietary Notes</label>
+          <textarea id="f-notes" placeholder="For special occasions, dietary restrictions, seating preferences…"></textarea>
+        </div>
+      </div>
+
+      <hr class="res-divider">
+      <button type="submit" class="btn-send" id="submit-btn">Confirm Reservation</button>
+    </form>
+
+    <div id="confirmation-screen" style="display:none" class="confirmation-screen">
+      <div class="confirmation-check">&#10003;</div>
+      <div class="confirmation-ref" id="conf-ref"></div>
+      <h2 class="confirmation-title">Reservation Confirmed</h2>
+      <p class="confirmation-detail" id="conf-detail"></p>
+      <div class="confirmation-actions">
+        <a href="/my-bookings.html" class="btn btn-primary">View My Reservations</a>
+        <button class="btn btn-outline" onclick="window.print()">Print Confirmation</button>
+        <button class="btn btn-secondary" onclick="resetForm()">New Reservation</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="site-footer"></div>
+  <script src="/js/api.js"></script>
+  <script>
+    if (!requireAuth()) throw new Error('redirect');
+    renderNav(); renderFooter();
+
+    const user = getUser();
+    if (user) {
+      document.getElementById('f-name').value  = user.name  || '';
+      document.getElementById('f-email').value = user.email || '';
+      document.getElementById('f-phone').value = user.phone || '';
+    }
+    document.getElementById('f-date').min = new Date().toISOString().split('T')[0];
+
+    async function loadZones() {
+      const sel = document.getElementById('f-zone');
+      try {
+        const tables = await api.tables.all();
+        const zoneMap = {};
+        tables.forEach(t => { if (t.zone && t.zone.id) zoneMap[t.zone.id] = t.zone.name; });
+        const zones = Object.entries(zoneMap);
+        sel.innerHTML =
+          '<option value="any" selected>Any Available Zone</option>' +
+          zones.map(([id, name]) => `<option value="${id}">${name}</option>`).join('');
+      } catch {
+        sel.innerHTML = '<option value="any" selected>Any Available Zone</option>';
+      }
+    }
+    loadZones();
+
+    function showFormError(msg) {
+      const alertBox = document.getElementById('alert-box');
+      alertBox.innerHTML = `<div class="res-alert error">${msg}</div>`;
+      alertBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      showToast(msg, 'error', 6000);
+    }
+
+    document.getElementById('reservation-form').addEventListener('submit', async e => {
+      e.preventDefault();
+      document.getElementById('alert-box').innerHTML = '';
+
+      const name      = document.getElementById('f-name').value.trim();
+      const date      = document.getElementById('f-date').value;
+      const time      = document.getElementById('f-time').value;
+      const partySize = document.getElementById('f-guests').value;
+
+      if (!name)      { showFormError('Please enter your full name.');         return; }
+      if (!date)      { showFormError('Please select a date.');                 return; }
+      if (!time)      { showFormError('Please select a preferred time.');       return; }
+      if (!partySize) { showFormError('Please select the number of guests.');  return; }
+
+      const btn = document.getElementById('submit-btn');
+      btn.disabled = true; btn.textContent = 'Checking Availability…';
+
+      const zoneVal   = document.getElementById('f-zone').value;
+      const notes     = document.getElementById('f-notes').value;
+      const source    = document.getElementById('f-source').value;
+      const fullNotes = [notes, source ? 'Source: ' + source : ''].filter(Boolean).join(' | ') || null;
+
+      try {
+        const tables = await api.tables.available(date, time, partySize);
+        if (tables.length === 0) {
+          btn.disabled = false; btn.textContent = 'Confirm Reservation';
+          showFormError('No tables available for your selection. Please try a different time or date.');
+          return;
+        }
+        let candidates = tables;
+        if (zoneVal && zoneVal !== 'any') {
+          const z = tables.filter(t => t.zone && String(t.zone.id) === String(zoneVal));
+          if (z.length) candidates = z;
+        }
+        btn.textContent = 'Confirming…';
+        const booking = await api.bookings.create({
+          tableId: candidates[0].id,
+          bookingDate: date,
+          bookingTime: time,
+          partySize: parseInt(partySize),
+          specialNotes: fullNotes,
+          depositAmount: 0,
+        });
+        const t = candidates[0];
+        document.getElementById('conf-ref').textContent = bookingRef(booking.id);
+        document.getElementById('conf-detail').innerHTML =
+          `Seat <strong>${t.tableNumber}</strong>` +
+          (t.zone ? ` &bull; <strong>${t.zone.name}</strong>` : '') +
+          `<br>${date} &bull; ${formatTime12(time)} &bull; ${partySize} guest${partySize > 1 ? 's' : ''}` +
+          (fullNotes ? `<br><em style="font-size:0.8rem">${fullNotes}</em>` : '');
+        document.getElementById('reservation-form').style.display = 'none';
+        document.getElementById('confirmation-screen').style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        showToast('Reservation confirmed! Reference: ' + bookingRef(booking.id), 'success', 6000);
+      } catch(err) {
+        console.error('Booking error:', err);
+        btn.disabled = false; btn.textContent = 'Confirm Reservation';
+        showFormError(err.message || 'Something went wrong. Please try again.');
+      }
+    });
+
+    function resetForm() {
+      document.getElementById('reservation-form').reset();
+      document.getElementById('reservation-form').style.display = 'block';
+      document.getElementById('confirmation-screen').style.display = 'none';
+      document.getElementById('alert-box').innerHTML = '';
+      loadZones();
+      if (user) {
+        document.getElementById('f-name').value  = user.name  || '';
+        document.getElementById('f-email').value = user.email || '';
+        document.getElementById('f-phone').value = user.phone || '';
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+# Maven
+backend/target/
+*.class
+*.jar
+*.war
+
+# Database files
+database/
+*.db
+*.mv.db
+*.trace.db
+
+# IDE
+.idea/
+*.iml
+.vscode/
+*.suo
+*.user
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Environment / secrets
+.env
+application-local.properties

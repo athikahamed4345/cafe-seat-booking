@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard — CafeBook</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <a href="/index.html" class="logo">&#9749; CafeBook</a>
+    <button class="nav-toggle" aria-label="Menu">&#9776;</button>
+    <div id="main-nav"></div>
+  </nav>
+
+  <div class="page-section">
+    <div class="page-title-bar fade-up">
+      <div>
+        <p class="page-subtitle">Administration</p>
+        <h1 class="page-title">Dashboard</h1>
+      </div>
+    </div>
+
+    <div id="alert-box"></div>
+    <div class="stat-row fade-up-d1" id="stat-row"></div>
+
+    <div class="tabs fade-up-d2">
+      <button class="tab-btn active" onclick="switchTab('bookings', this)">Bookings</button>
+      <button class="tab-btn"        onclick="switchTab('tables',   this)">Tables</button>
+    </div>
+
+    <!-- ── Bookings tab ── -->
+    <div id="tab-bookings">
+      <div class="admin-filter-row">
+        <div class="form-group" style="margin-bottom:0">
+          <label>Search</label>
+          <input id="booking-search" placeholder="Name, email, seat number…" oninput="filterBookings()">
+        </div>
+        <div class="form-group" style="margin-bottom:0">
+          <label>Status</label>
+          <select id="status-filter" onchange="filterBookings()">
+            <option value="">All Statuses</option>
+            <option>PENDING</option><option>CONFIRMED</option>
+            <option>COMPLETED</option><option>CANCELLED</option><option>NO_SHOW</option>
+          </select>
+        </div>
+        <div class="form-group" style="margin-bottom:0">
+          <label>Date</label>
+          <input type="date" id="date-filter" oninput="filterBookings()">
+        </div>
+      </div>
+      <div id="bookings-list"><p class="text-muted" style="padding:1rem 0">Loading…</p></div>
+    </div>
+
+    <!-- ── Tables tab ── -->
+    <div id="tab-tables" style="display:none">
+      <div class="card card-accent" style="margin-bottom:1.5rem">
+        <h3 style="font-family:'Playfair Display',serif;font-weight:600;margin-bottom:1.2rem;font-size:1.1rem">
+          Add New Table
+        </h3>
+        <form id="add-table-form" class="add-table-form">
+          <div class="form-group"><label>Table No.</label><input id="t-num" required placeholder="e.g. W3"></div>
+          <div class="form-group"><label>Min Seats</label><input type="number" id="t-min" min="1" value="2"></div>
+          <div class="form-group"><label>Max Seats</label><input type="number" id="t-max" min="1" value="4"></div>
+          <div class="form-group">
+            <label>Type</label>
+            <select id="t-type">
+              <option>STANDARD</option><option>GROUP</option>
+              <option>PRIVATE</option><option>MERGED</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Features</label><input id="t-feat" placeholder="optional"></div>
+          <div class="form-group">
+            <label>&nbsp;</label>
+            <button class="btn btn-primary" type="submit" style="width:100%">Add Table</button>
+          </div>
+        </form>
+      </div>
+      <div id="tables-list"><p class="text-muted" style="padding:1rem 0">Loading…</p></div>
+    </div>
+  </div>
+
+  <div id="site-footer"></div>
+  <script src="/js/api.js"></script>
+  <script>
+    if (!requireAdmin()) throw new Error('redirect');
+    renderNav(); renderFooter();
+
+    let allBookings = [], allTables = [];
+
+    function switchTab(name, btn) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('tab-bookings').style.display = name === 'bookings' ? 'block' : 'none';
+      document.getElementById('tab-tables').style.display   = name === 'tables'   ? 'block' : 'none';
+    }
+
+    async function loadAll() {
+      try { allBookings = await api.admin.bookings(); filterBookings(); updateStats(); } catch(e) { console.error(e); }
+      try { allTables   = await api.tables.all();     renderTables();               } catch(e) { console.error(e); }
+    }
+
+    function updateStats() {
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('stat-row').innerHTML = [
+        { num: allBookings.length,                                              lbl: 'Total Bookings' },
+        { num: allBookings.filter(b => b.status === 'CONFIRMED').length,        lbl: 'Confirmed'      },
+        { num: allBookings.filter(b => b.status === 'PENDING').length,          lbl: 'Pending'        },
+        { num: allBookings.filter(b => b.bookingDate === today).length,         lbl: 'Today'          },
+      ].map(s =>
+        `<div class="stat-card">
+           <div class="stat-num">${s.num}</div>
+           <div class="stat-lbl">${s.lbl}</div>
+         </div>`
+      ).join('');
+    }
+
+    function filterBookings() {
+      const q      = (document.getElementById('booking-search').value || '').toLowerCase();
+      const status = document.getElementById('status-filter').value;
+      const date   = document.getElementById('date-filter').value;
+
+      const list = allBookings.filter(b => {
+        if (status && b.status !== status) return false;
+        if (date   && b.bookingDate !== date) return false;
+        if (q) {
+          const hay = [b.user?.name, b.user?.email, b.table?.tableNumber, b.bookingDate]
+            .join(' ').toLowerCase();
+          if (!hay.includes(q)) return false;
+        }
+        return true;
+      });
+
+      const el = document.getElementById('bookings-list');
+      if (list.length === 0) {
+        el.innerHTML = '<div class="empty-state"><p>No bookings match your filter.</p></div>';
+        return;
+      }
+      el.innerHTML = list.map(b => `
+        <div class="card" id="bcard-${b.id}">
+          <div class="booking-user">
+            <div>
+              <strong style="font-family:'Playfair Display',serif">${b.user ? b.user.name : 'Guest'}</strong>
+              <span class="text-muted" style="margin-left:0.5rem;font-size:0.78rem">${b.user ? b.user.email : ''}</span>
+              <span style="margin-left:0.5rem;font-size:0.68rem;color:#bbb">${bookingRef(b.id)}</span>
+            </div>
+            ${statusBadge(b.status)}
+          </div>
+          <p class="booking-meta">
+            Seat ${b.table ? b.table.tableNumber : '?'}
+            ${b.table && b.table.zone ? ' &bull; ' + b.table.zone.name : ''}
+            &nbsp;&bull;&nbsp; ${b.bookingDate} at ${b.bookingTime}
+            &nbsp;&bull;&nbsp; ${b.partySize} guest${b.partySize > 1 ? 's' : ''}
+          </p>
+          <div class="booking-actions">
+            <select onchange="updateStatus(${b.id}, this.value)">
+              ${['PENDING','CONFIRMED','COMPLETED','NO_SHOW','CANCELLED']
+                .map(s => `<option value="${s}" ${b.status === s ? 'selected' : ''}>${s}</option>`)
+                .join('')}
+            </select>
+          </div>
+        </div>`).join('');
+    }
+
+    async function updateStatus(id, status) {
+      try {
+        const updated = await api.admin.updateStatus(id, status);
+        const idx = allBookings.findIndex(b => b.id === id);
+        if (idx !== -1) allBookings[idx] = updated;
+        filterBookings(); updateStats();
+        showToast('Status updated to ' + status, 'success');
+      } catch(err) { showToast(err.message, 'error'); }
+    }
+
+    function renderTables() {
+      const el = document.getElementById('tables-list');
+      if (allTables.length === 0) {
+        el.innerHTML = '<div class="empty-state"><p>No tables configured yet.</p></div>';
+        return;
+      }
+      el.innerHTML = allTables.map(t => `
+        <div class="card" id="tcard-${t.id}"
+             style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.8rem">
+          <div>
+            <strong style="font-family:'Playfair Display',serif">Seat ${t.tableNumber}</strong>
+            <span class="text-muted" style="margin-left:0.5rem">
+              ${t.type} &bull; ${t.minCapacity}&ndash;${t.maxCapacity} seats
+            </span>
+            ${t.isAccessible ? '<span class="badge badge-blue" style="margin-left:0.5rem">Accessible</span>' : ''}
+            ${t.specialFeatures ? `<span class="text-muted" style="margin-left:0.4rem;font-size:0.78rem">${t.specialFeatures}</span>` : ''}
+          </div>
+          <div style="display:flex;gap:0.5rem">
+            <button class="btn ${t.isAvailable ? 'btn-secondary' : 'btn-gold'}" style="font-size:0.72rem"
+                    onclick="toggleTable(${t.id}, ${t.isAvailable})">
+              ${t.isAvailable ? 'Mark Unavailable' : 'Mark Available'}
+            </button>
+            <button class="btn btn-danger" style="font-size:0.72rem"
+                    onclick="deleteTable(${t.id})">Delete</button>
+          </div>
+        </div>`).join('');
+    }
+
+    document.getElementById('add-table-form').addEventListener('submit', async e => {
+      e.preventDefault();
+      const btn = e.target.querySelector('button');
+      btn.disabled = true; btn.textContent = 'Adding…';
+      try {
+        const t = await api.admin.addTable({
+          tableNumber:     document.getElementById('t-num').value,
+          minCapacity:     parseInt(document.getElementById('t-min').value),
+          maxCapacity:     parseInt(document.getElementById('t-max').value),
+          type:            document.getElementById('t-type').value,
+          isAccessible:    false,
+          isAvailable:     true,
+          specialFeatures: document.getElementById('t-feat').value || null,
+        });
+        allTables.push(t); renderTables(); e.target.reset();
+        showToast('Table ' + t.tableNumber + ' added.', 'success');
+      } catch(err) { showToast(err.message, 'error'); }
+      btn.disabled = false; btn.textContent = 'Add Table';
+    });
+
+    async function toggleTable(id, current) {
+      try {
+        const updated = await api.admin.toggleTable(id, !current);
+        const idx = allTables.findIndex(t => t.id === id);
+        if (idx !== -1) allTables[idx] = updated;
+        renderTables(); showToast('Table availability updated.', 'success');
+      } catch(err) { showToast(err.message, 'error'); }
+    }
+
+    async function deleteTable(id) {
+      if (!confirm('Delete this table? This cannot be undone.')) return;
+      try {
+        await api.admin.deleteTable(id);
+        allTables = allTables.filter(t => t.id !== id);
+        renderTables(); showToast('Table deleted.', 'success');
+      } catch(err) { showToast(err.message, 'error'); }
+    }
+
+    loadAll();
+  </script>
+</body>
+</html>

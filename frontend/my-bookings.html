@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Reservations — CafeBook</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <a href="/index.html" class="logo">&#9749; CafeBook</a>
+    <button class="nav-toggle" aria-label="Menu">&#9776;</button>
+    <div id="main-nav"></div>
+  </nav>
+
+  <div class="page-section">
+    <div class="page-title-bar fade-up">
+      <div>
+        <p class="page-subtitle">Your Account</p>
+        <h1 class="page-title">My Reservations</h1>
+      </div>
+      <div style="display:flex;gap:0.75rem;flex-wrap:wrap">
+        <a href="/book.html" class="btn btn-primary">+ New Reservation</a>
+        <button class="btn btn-secondary" onclick="togglePasswordForm()" style="font-size:0.82rem">Change Password</button>
+        <button class="btn btn-danger"    onclick="openDeleteModal()"    style="font-size:0.82rem">Delete Account</button>
+      </div>
+    </div>
+
+    <!-- Change Password inline form -->
+    <div id="password-form-wrap" style="display:none" class="card fade-up" style="margin-bottom:1.5rem">
+      <h3 style="font-family:'Playfair Display',serif;font-size:1rem;margin-bottom:1rem">Change Password</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:0.75rem;align-items:end;flex-wrap:wrap">
+        <div class="form-group" style="margin:0">
+          <label>Current Password</label>
+          <input type="password" id="pw-current" placeholder="••••••••">
+        </div>
+        <div class="form-group" style="margin:0">
+          <label>New Password</label>
+          <input type="password" id="pw-new" placeholder="Min. 6 characters">
+        </div>
+        <div class="form-group" style="margin:0">
+          <label>Confirm New Password</label>
+          <input type="password" id="pw-confirm" placeholder="••••••••">
+        </div>
+        <div class="form-group" style="margin:0">
+          <label>&nbsp;</label>
+          <button class="btn btn-primary" onclick="changePassword()" id="pw-btn">Update</button>
+        </div>
+      </div>
+      <div id="pw-alert" style="margin-top:0.75rem"></div>
+    </div>
+
+    <div id="alert-box"></div>
+    <div id="bookings-list" class="fade-up-d1">
+      <p class="text-muted" style="padding:1rem 0">Loading…</p>
+    </div>
+  </div>
+
+  <!-- Delete account confirmation modal -->
+  <div id="delete-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center">
+    <div style="background:#fff;border-radius:8px;padding:2rem;max-width:380px;width:90%;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,0.2)">
+      <p style="font-size:1.8rem;margin-bottom:0.5rem">&#9888;</p>
+      <h3 style="font-family:'Playfair Display',serif;margin-bottom:0.75rem">Delete Account?</h3>
+      <p style="font-size:0.88rem;color:#666;line-height:1.5;margin-bottom:1.5rem">
+        This will permanently delete your account and cancel all your reservations. This cannot be undone.
+      </p>
+      <div style="display:flex;gap:0.75rem;justify-content:center">
+        <button class="btn btn-secondary" onclick="closeDeleteModal()">Cancel</button>
+        <button class="btn btn-danger" id="confirm-delete-btn" onclick="confirmDeleteAccount()">Yes, Delete My Account</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="site-footer"></div>
+  <script src="/js/api.js"></script>
+  <script>
+    if (!requireAuth()) throw new Error('redirect');
+    renderNav(); renderFooter();
+
+    const STATUS_COLOR = {
+      CONFIRMED: '#2a6b3a', PENDING: '#7a5c00',
+      CANCELLED: '#8B1A1A', COMPLETED: '#1a3d8c', NO_SHOW: '#666'
+    };
+
+    async function loadBookings() {
+      try {
+        const bookings = await api.bookings.my();
+        const el = document.getElementById('bookings-list');
+        if (bookings.length === 0) {
+          el.innerHTML = `<div class="empty-state">
+            <p>You have no reservations yet.</p>
+            <a href="/book.html" class="btn btn-primary">Make Your First Reservation</a>
+          </div>`;
+          return;
+        }
+        el.innerHTML = bookings.map(b => `
+          <div class="card" id="booking-${b.id}"
+               style="border-left:3px solid ${STATUS_COLOR[b.status] || '#e5ddd0'}">
+            <div class="booking-user">
+              <div>
+                <strong style="font-family:'Playfair Display',serif;font-size:1.05rem">
+                  Seat ${b.table ? b.table.tableNumber : '?'}
+                </strong>
+                ${b.table && b.table.zone
+                  ? `<span class="text-muted" style="margin-left:0.6rem">${b.table.zone.name}</span>`
+                  : ''}
+                <span style="margin-left:0.6rem;font-size:0.68rem;color:#bbb">${bookingRef(b.id)}</span>
+              </div>
+              ${statusBadge(b.status)}
+            </div>
+            <p class="booking-meta">
+              ${b.bookingDate} &nbsp;&bull;&nbsp;
+              ${formatTime12(b.bookingTime)} &nbsp;&bull;&nbsp;
+              ${b.partySize} guest${b.partySize > 1 ? 's' : ''}
+            </p>
+            ${b.specialNotes
+              ? `<p class="text-muted" style="margin-top:0.35rem;font-style:italic">&#8220;${b.specialNotes}&#8221;</p>`
+              : ''}
+            ${(b.status === 'CONFIRMED' || b.status === 'PENDING')
+              ? `<div style="margin-top:1rem">
+                   <button class="btn btn-danger" onclick="cancelBooking(${b.id})">Cancel Reservation</button>
+                 </div>`
+              : ''}
+          </div>`).join('');
+      } catch(err) {
+        document.getElementById('bookings-list').innerHTML =
+          `<div class="alert alert-error">${err.message}</div>`;
+      }
+    }
+
+    async function cancelBooking(id) {
+      if (!confirm('Are you sure you want to cancel this reservation?')) return;
+      try {
+        await api.bookings.cancel(id);
+        showToast('Reservation cancelled.', 'success');
+        loadBookings();
+      } catch(err) { showToast(err.message, 'error'); }
+    }
+
+    // ── Change password ───────────────────────────────────────────────────────
+    function togglePasswordForm() {
+      const wrap = document.getElementById('password-form-wrap');
+      wrap.style.display = wrap.style.display === 'none' ? 'block' : 'none';
+    }
+
+    async function changePassword() {
+      const current = document.getElementById('pw-current').value;
+      const newPw   = document.getElementById('pw-new').value;
+      const confirm = document.getElementById('pw-confirm').value;
+      const alert   = document.getElementById('pw-alert');
+      const btn     = document.getElementById('pw-btn');
+
+      alert.innerHTML = '';
+      if (!current) { alert.innerHTML = '<p style="color:#c0392b;font-size:0.85rem">Enter your current password.</p>'; return; }
+      if (newPw.length < 6) { alert.innerHTML = '<p style="color:#c0392b;font-size:0.85rem">New password must be at least 6 characters.</p>'; return; }
+      if (newPw !== confirm) { alert.innerHTML = '<p style="color:#c0392b;font-size:0.85rem">Passwords do not match.</p>'; return; }
+
+      btn.disabled = true; btn.textContent = 'Updating…';
+      try {
+        await api.user.changePassword(current, newPw);
+        alert.innerHTML = '<p style="color:#27ae60;font-size:0.85rem">Password updated successfully.</p>';
+        document.getElementById('pw-current').value = '';
+        document.getElementById('pw-new').value     = '';
+        document.getElementById('pw-confirm').value = '';
+      } catch(err) {
+        alert.innerHTML = `<p style="color:#c0392b;font-size:0.85rem">${err.message}</p>`;
+      }
+      btn.disabled = false; btn.textContent = 'Update';
+    }
+
+    // ── Delete account ────────────────────────────────────────────────────────
+    function openDeleteModal()  { document.getElementById('delete-modal').style.display = 'flex'; }
+    function closeDeleteModal() { document.getElementById('delete-modal').style.display = 'none'; }
+
+    async function confirmDeleteAccount() {
+      const btn = document.getElementById('confirm-delete-btn');
+      btn.disabled = true; btn.textContent = 'Deleting…';
+      try {
+        await api.user.deleteAccount();
+        localStorage.clear();
+        location.href = '/auth.html';
+      } catch(err) {
+        showToast(err.message, 'error');
+        closeDeleteModal();
+        btn.disabled = false; btn.textContent = 'Yes, Delete My Account';
+      }
+    }
+
+    loadBookings();
+  </script>
+</body>
+</html>

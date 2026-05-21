@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verify Email — CafeBook</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <a href="/index.html" class="logo">&#9749; CafeBook</a>
+    <button class="nav-toggle" aria-label="Menu">&#9776;</button>
+    <div id="main-nav"></div>
+  </nav>
+
+  <div class="auth-page">
+    <div class="auth-card" style="text-align:center">
+
+      <!-- Verifying spinner -->
+      <div id="pane-verifying" style="padding:1rem 0">
+        <p style="font-size:1.5rem;margin-bottom:0.5rem">&#9203;</p>
+        <p style="color:#666">Verifying your email…</p>
+      </div>
+
+      <!-- Success -->
+      <div id="pane-success" style="display:none;padding:1rem 0">
+        <p style="font-size:2.5rem;margin-bottom:0.5rem;color:#27ae60">&#10003;</p>
+        <h2 style="font-family:'Playfair Display',serif;margin-bottom:0.5rem">Email Verified!</h2>
+        <p style="font-size:0.9rem;color:#666;margin-bottom:1.5rem;line-height:1.6">
+          Your account is now active. Sign in to start making reservations.
+        </p>
+        <a href="/auth.html" class="btn btn-primary">Sign In Now</a>
+      </div>
+
+      <!-- Error -->
+      <div id="pane-error" style="display:none;padding:1rem 0">
+        <p style="font-size:2.5rem;margin-bottom:0.5rem;color:#e74c3c">&#10007;</p>
+        <h2 style="font-family:'Playfair Display',serif;margin-bottom:0.5rem">Link Invalid</h2>
+        <p style="font-size:0.9rem;color:#666;margin-bottom:1.5rem;line-height:1.6">
+          This verification link is invalid or has already been used.<br>
+          Register again to get a new link.
+        </p>
+        <a href="/auth.html?tab=register" class="btn btn-primary">Register Again</a>
+      </div>
+
+    </div>
+  </div>
+
+  <div id="site-footer"></div>
+  <script src="/js/api.js"></script>
+  <script>
+    renderNav(); renderFooter();
+
+    const token = new URLSearchParams(location.search).get('token');
+
+    async function verify() {
+      if (!token) {
+        show('error'); return;
+      }
+      try {
+        await api.auth.verifyEmail(token);
+        show('success');
+      } catch {
+        show('error');
+      }
+    }
+
+    function show(pane) {
+      ['verifying','success','error'].forEach(p =>
+        document.getElementById('pane-' + p).style.display = p === pane ? 'block' : 'none'
+      );
+    }
+
+    verify();
+  </script>
+</body>
+</html>

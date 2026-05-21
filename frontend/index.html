@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CafeBook — Reserve Your Table</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <a href="/index.html" class="logo">&#9749; CafeBook</a>
+    <button class="nav-toggle" aria-label="Menu">&#9776;</button>
+    <div id="main-nav"></div>
+  </nav>
+
+  <div class="hero-home">
+    <div class="hero-home-inner">
+      <span class="hero-eyebrow fade-up">Fine Dining &bull; Elegant Ambience</span>
+      <h1 class="fade-up-d1">Reserve Your<br><em>Perfect</em> Table</h1>
+      <p class="fade-up-d2">Choose your favourite spot — window-side, cosy corner, outdoor patio, or private nook. Book in seconds and arrive to a table waiting just for you.</p>
+      <button class="btn-hero-outline fade-up-d3" onclick="bookNow()">Make a Reservation</button>
+    </div>
+  </div>
+
+  <div class="features-section">
+    <div class="section-header fade-up">
+      <span class="section-label">Why CafeBook</span>
+      <h2>The Seamless Cafe Experience</h2>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card fade-up-d1">
+        <div class="feature-icon-wrap">&#9749;</div>
+        <h3>Choose Your Spot</h3>
+        <p>Window-side, cosy corner, outdoor patio, or a private nook — all bookable in one click.</p>
+      </div>
+      <div class="feature-card fade-up-d2">
+        <div class="feature-icon-wrap">&#128197;</div>
+        <h3>Live Availability</h3>
+        <p>Real-time seat status so there are no surprises when you walk through the door.</p>
+      </div>
+      <div class="feature-card fade-up-d3">
+        <div class="feature-icon-wrap">&#9855;</div>
+        <h3>Accessibility First</h3>
+        <p>Wheelchair-friendly seats are clearly marked and always prioritised.</p>
+      </div>
+      <div class="feature-card fade-up-d4">
+        <div class="feature-icon-wrap">&#10003;</div>
+        <h3>Instant Confirmation</h3>
+        <p>Get a booking reference immediately. No waiting, no phone calls needed.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="how-section">
+    <div class="how-inner">
+      <div class="section-header">
+        <span class="section-label">Simple Process</span>
+        <h2>How It Works</h2>
+      </div>
+      <div class="steps-grid">
+        <div class="step fade-up-d1">
+          <div class="step-num">1</div>
+          <h3>Create Your Account</h3>
+          <p>Sign up in under a minute. Your preferences and booking history are saved for next time.</p>
+        </div>
+        <div class="step fade-up-d2">
+          <div class="step-num">2</div>
+          <h3>Pick Date, Time &amp; Zone</h3>
+          <p>Choose when you'd like to visit, how many guests, and your preferred seating zone.</p>
+        </div>
+        <div class="step fade-up-d3">
+          <div class="step-num">3</div>
+          <h3>Walk In &amp; Enjoy</h3>
+          <p>Your table is reserved and waiting. Just arrive, show your booking reference, and relax.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="site-footer"></div>
+  <script src="/js/api.js"></script>
+  <script>
+    renderNav();
+    renderFooter();
+    function bookNow() {
+      location.href = isLoggedIn() ? '/book.html' : '/auth.html';
+    }
+  </script>
+</body>
+</html>

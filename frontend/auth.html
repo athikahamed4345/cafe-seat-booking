@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign In — CafeBook</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <a href="/index.html" class="logo">&#9749; CafeBook</a>
+    <button class="nav-toggle" aria-label="Menu">&#9776;</button>
+    <div id="main-nav"></div>
+  </nav>
+
+  <div class="auth-page">
+    <div class="auth-card">
+
+      <div class="tabs" style="margin-bottom:1.5rem">
+        <button class="tab-btn active" id="tab-login"    onclick="showTab('login')">Sign In</button>
+        <button class="tab-btn"        id="tab-register" onclick="showTab('register')">Register</button>
+      </div>
+
+      <div id="alert-box"></div>
+
+      <!-- ── Sign In ── -->
+      <div id="pane-login">
+        <span class="auth-eyebrow">Welcome Back</span>
+        <form id="login-form">
+          <div class="auth-field">
+            <label>Email Address</label>
+            <input type="email" id="login-email" required placeholder="you@example.com" autocomplete="email">
+          </div>
+          <div class="auth-field">
+            <label>Password</label>
+            <input type="password" id="login-password" required placeholder="••••••••" autocomplete="current-password">
+          </div>
+          <button class="btn-send" type="submit" id="login-btn" style="margin-top:2rem">Sign In</button>
+        </form>
+        <p style="text-align:center;margin-top:1rem;font-size:0.85rem">
+          <a href="#" onclick="showTab('forgot')" style="color:#8B6914;text-decoration:none">Forgot your password?</a>
+        </p>
+      </div>
+
+      <!-- ── Register ── -->
+      <div id="pane-register" style="display:none">
+        <span class="auth-eyebrow">Join CafeBook</span>
+        <form id="register-form">
+          <div class="auth-field">
+            <label>Full Name <span style="color:#8B1A1A">*</span></label>
+            <input type="text" id="reg-name" required placeholder="Jane Smith" autocomplete="name">
+          </div>
+          <div class="auth-field">
+            <label>Email Address <span style="color:#8B1A1A">*</span></label>
+            <input type="email" id="reg-email" required placeholder="you@example.com" autocomplete="email">
+          </div>
+          <div class="auth-field">
+            <label>Phone Number</label>
+            <input type="tel" id="reg-phone" placeholder="+91 9876543210" autocomplete="tel">
+          </div>
+          <div class="auth-field">
+            <label>Password <span style="color:#8B1A1A">*</span></label>
+            <input type="password" id="reg-password" required placeholder="Min. 6 characters" minlength="6" autocomplete="new-password">
+          </div>
+          <div class="auth-field">
+            <label>Dietary Notes</label>
+            <input type="text" id="reg-dietary" placeholder="e.g. Vegan, Gluten-free">
+          </div>
+          <div class="auth-field-row">
+            <input type="checkbox" id="reg-accessible">
+            <label for="reg-accessible">I need wheelchair-accessible seating</label>
+          </div>
+          <div class="auth-field-row" style="margin-top:0.75rem;align-items:flex-start;gap:0.6rem">
+            <input type="checkbox" id="reg-gdpr" required style="margin-top:3px;flex-shrink:0">
+            <label for="reg-gdpr" style="font-size:0.82rem;color:#555;line-height:1.45">
+              I agree to the Privacy Policy and consent to CafeBook storing my data to manage reservations.
+              <span style="color:#8B1A1A">*</span>
+            </label>
+          </div>
+          <button class="btn-send" type="submit" id="register-btn" style="margin-top:1rem">Create Account</button>
+        </form>
+      </div>
+
+      <!-- ── Check Email (shown after successful register) ── -->
+      <div id="pane-check-email" style="display:none;text-align:center;padding:0.5rem 0">
+        <p style="font-size:2.5rem;margin-bottom:0.5rem">&#9993;</p>
+        <h3 style="font-family:'Playfair Display',serif;margin-bottom:0.75rem">Check Your Inbox</h3>
+        <p style="font-size:0.88rem;color:#555;line-height:1.6;margin-bottom:1.2rem">
+          We've sent a verification link to <strong id="reg-email-display"></strong>.<br>
+          Click the link in the email to activate your account, then sign in.
+        </p>
+        <button class="btn btn-secondary" onclick="showTab('login')" style="width:100%">Go to Sign In</button>
+      </div>
+
+      <!-- ── Forgot Password ── -->
+      <div id="pane-forgot" style="display:none">
+        <span class="auth-eyebrow">Reset Password</span>
+        <p style="font-size:0.88rem;color:#666;margin-bottom:1.2rem;line-height:1.5">
+          Enter your email and we'll send a reset link if an account exists.
+        </p>
+        <form id="forgot-form">
+          <div class="auth-field">
+            <label>Email Address</label>
+            <input type="email" id="forgot-email" required placeholder="you@example.com" autocomplete="email">
+          </div>
+          <button class="btn-send" type="submit" id="forgot-btn" style="margin-top:1.5rem">Send Reset Link</button>
+        </form>
+        <p style="text-align:center;margin-top:1rem;font-size:0.85rem">
+          <a href="#" onclick="showTab('login')" style="color:#8B6914;text-decoration:none">Back to Sign In</a>
+        </p>
+      </div>
+
+    </div>
+  </div>
+
+  <div id="site-footer"></div>
+  <script src="/js/api.js"></script>
+  <script>
+    renderNav(); renderFooter();
+    if (isLoggedIn()) location.href = '/index.html';
+
+    function showTab(tab) {
+      ['login','register','check-email','forgot'].forEach(t =>
+        document.getElementById('pane-' + t).style.display = t === tab ? 'block' : 'none'
+      );
+      document.getElementById('tab-login').classList.toggle('active',    tab === 'login');
+      document.getElementById('tab-register').classList.toggle('active', tab === 'register');
+      document.getElementById('alert-box').innerHTML = '';
+      const titles = { login:'Sign In', register:'Register', 'check-email':'Check Email', forgot:'Reset Password' };
+      document.title = (titles[tab] || 'CafeBook') + ' — CafeBook';
+    }
+
+    if (new URLSearchParams(location.search).get('tab') === 'register') showTab('register');
+
+    // ── Sign In ──
+    document.getElementById('login-form').addEventListener('submit', async e => {
+      e.preventDefault();
+      const btn = document.getElementById('login-btn');
+      btn.disabled = true; btn.textContent = 'Signing In…';
+      document.getElementById('alert-box').innerHTML = '';
+      try {
+        const res = await api.auth.login({
+          email:    document.getElementById('login-email').value,
+          password: document.getElementById('login-password').value,
+        });
+        localStorage.setItem('token', res.token);
+        localStorage.setItem('user', JSON.stringify(res.user));
+        location.href = '/book.html';
+      } catch(err) {
+        document.getElementById('alert-box').innerHTML =
+          `<div class="auth-alert error">${err.message}</div>`;
+        btn.disabled = false; btn.textContent = 'Sign In';
+      }
+    });
+
+    // ── Register ──
+    document.getElementById('register-form').addEventListener('submit', async e => {
+      e.preventDefault();
+      if (!document.getElementById('reg-gdpr').checked) {
+        document.getElementById('alert-box').innerHTML =
+          `<div class="auth-alert error">Please accept the Privacy Policy to continue.</div>`;
+        return;
+      }
+      const btn   = document.getElementById('register-btn');
+      const email = document.getElementById('reg-email').value;
+      btn.disabled = true; btn.textContent = 'Creating Account…';
+      document.getElementById('alert-box').innerHTML = '';
+      try {
+        await api.auth.register({
+          name:                document.getElementById('reg-name').value,
+          email,
+          phone:               document.getElementById('reg-phone').value,
+          password:            document.getElementById('reg-password').value,
+          dietaryNotes:        document.getElementById('reg-dietary').value,
+          accessibilityNeeded: document.getElementById('reg-accessible').checked,
+          gdprConsent:         true,
+        });
+        // Show check-email screen instead of auto-login
+        document.getElementById('reg-email-display').textContent = email;
+        showTab('check-email');
+      } catch(err) {
+        document.getElementById('alert-box').innerHTML =
+          `<div class="auth-alert error">${err.message}</div>`;
+        btn.disabled = false; btn.textContent = 'Create Account';
+      }
+    });
+
+    // ── Forgot Password ──
+    document.getElementById('forgot-form').addEventListener('submit', async e => {
+      e.preventDefault();
+      const btn = document.getElementById('forgot-btn');
+      btn.disabled = true; btn.textContent = 'Sending…';
+      document.getElementById('alert-box').innerHTML = '';
+      try {
+        await api.auth.forgotPassword(document.getElementById('forgot-email').value);
+        document.getElementById('alert-box').innerHTML =
+          `<div class="auth-alert success">If that email is registered, a reset link has been sent.</div>`;
+      } catch(err) {
+        document.getElementById('alert-box').innerHTML =
+          `<div class="auth-alert error">${err.message}</div>`;
+      }
+      btn.disabled = false; btn.textContent = 'Send Reset Link';
+    });
+  </script>
+</body>
+</html>
